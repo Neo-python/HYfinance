@@ -138,5 +138,11 @@ fabric.properties
 # Markdown Navigator plugin
 .idea/**/markdown-navigator.xml
 .idea/**/markdown-navigator/
+.idea/*
+
+# neo
+src/*
+
+!src/finance
 
 # End of https://www.gitignore.io/api/go,macos,pycharm
