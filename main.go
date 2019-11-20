@@ -18,7 +18,6 @@ func main() {
 	router := gin.Default()
 	fmt.Println(plugins.Config.SMSAppId)
 	router.GET("test", api.Registered)
-	router.GET("sms", api.SMSsend)
-
+	router.GET("core_sms", api.SMSSend)
 	router.Run()
 }
