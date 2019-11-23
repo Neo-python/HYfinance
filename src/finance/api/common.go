@@ -24,7 +24,7 @@ func SMSSend(context *gin.Context) {
 
 	// 发送短信前的准备工作
 	code := plugins.GenerateVerifyCode(4)
-	redis.Set(fmt.Sprint("Registered_", form.Phone), code, 300)
+	redis.Set(fmt.Sprint("Registered_", form.Phone), code, 30000)
 
 	// 发送短信
 	sms := core_sms.SMS{&core_sms.Phone{form.Phone}, &core_sms.Genre{form.Genre}}

@@ -20,5 +20,6 @@ func main() {
 	fmt.Println(plugins.Config.SMSAppId)
 	router.POST("registered", api.Registered)
 	router.GET("core_sms", api.SMSSend)
+	router.GET("test", api.Test)
 	router.Run()
 }

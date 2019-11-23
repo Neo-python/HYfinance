@@ -29,6 +29,15 @@ type ErrorExport struct {
 	ErrorFieldsStruct
 }
 
+// 装填数据
+func (export *Export) SetData(key string, value interface{}) {
+	if export.Data == nil {
+		export.Data = map[string]interface{}{}
+	}
+
+	export.Data[key] = value
+}
+
 // 接口正常返回
 func (export *Export) ApiExport(context *gin.Context) {
 	if export.Data == nil {

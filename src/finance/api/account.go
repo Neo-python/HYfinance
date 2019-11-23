@@ -3,10 +3,9 @@ package api
 import (
 	"finance/models"
 	plugins "finance/plugins/common"
+	"finance/plugins/common/structs_copy"
 	"finance/validator/account"
-	//"github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 // 注册账号
@@ -26,12 +25,10 @@ func Registered(context *gin.Context) {
 		plugins.ApiExport.Error(context, err)
 		return
 	}
-	var finance = models.Finance{}
-	finance.Name = registered.Name
-	finance.Phone = registered.Phone
-	finance.Password = registered.Password
-	//finance := models.Finance{Name: registered.Name, Phone: registered.Phone, Password: registered.Password}
-	models.DB.Create(finance)
 
-	context.JSON(http.StatusOK, gin.H{"status": 1, "name": registered.Name})
+	finance := models.Finance{Name: registered.Name, Phone: registered.Phone, Password: registered.Password}
+	models.DB.Create(&finance)
+
+	plugins.ApiExport.SetData("finance", structs_copy.Map(&finance))
+	plugins.ApiExport.ApiExport(context)
 }
