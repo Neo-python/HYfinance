@@ -9,35 +9,32 @@ import (
 	"fmt"
 	"github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
-	"net/http"
-	"time"
 )
 
 // 发送短信
-func SMSSend(c *gin.Context) {
+// 记录验证码至redis,为后续校验做准备
+func SMSSend(context *gin.Context) {
 	// 处理表单
 	var form validator.SMSSend
-	c.Bind(&form)
-	_, err := govalidator.ValidateStruct(&form)
-	if err != nil {
-		c.JSON(http.StatusGatewayTimeout, gin.H{"message": err.Error()})
+	context.Bind(&form)
+
+	if _, err := govalidator.ValidateStruct(&form); err != nil {
+		plugins.ApiExport.Error(context, err)
 	}
 
 	// 发送短信前的准备工作
 	code := plugins.GenerateVerifyCode(4)
-	redis.Set(fmt.Sprint("Registered_%", form.Phone), code, 1)
+	redis.Set(fmt.Sprint("Registered_", form.Phone), code, 300)
 
 	// 发送短信
-	sms := core_sms.SMS{&core_sms.PhoneBase{form.Phone}, &core_sms.GenreBase{form.Genre}}
-	resp, err := sms.Send(code)
-	export := plugins.Export{}
-	if err != nil {
-		// 修改接口错误码与提示信息
-		export.ErrorCode = http.StatusNotAcceptable
-		export.Message = resp
-	}
-	time.Sleep(time.Second + 1)
-	fmt.Println(redis.Get(fmt.Sprint("Registered_%", form.Phone)))
+	sms := core_sms.SMS{&core_sms.Phone{form.Phone}, &core_sms.Genre{form.Genre}}
 	// 接口返回
-	c.JSON(http.StatusOK, export.ApiExport())
+	if result, err := sms.Send(code); err != nil {
+		plugins.ApiExport.Error(context, err)
+		return
+	} else {
+		println(result)
+	}
+
+	plugins.ApiExport.ApiExport(context)
 }

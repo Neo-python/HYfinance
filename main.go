@@ -2,6 +2,7 @@ package main
 
 import (
 	"finance/api"
+	_ "finance/models"
 	"finance/plugins"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -17,7 +18,7 @@ func main() {
 	fmt.Print(user.Name)
 	router := gin.Default()
 	fmt.Println(plugins.Config.SMSAppId)
-	router.GET("test", api.Registered)
+	router.POST("registered", api.Registered)
 	router.GET("core_sms", api.SMSSend)
 	router.Run()
 }

@@ -1,6 +1,7 @@
 package core_sms
 
 import (
+	"errors"
 	"net/http"
 	"net/url"
 )
@@ -8,17 +9,17 @@ import (
 // 注册短信模板编号
 var SMSTemplateId map[string]string = map[string]string{"registered": "477438"}
 
-type PhoneBase struct {
+type Phone struct {
 	Phone string `json:"phone"`
 }
 
-type GenreBase struct {
+type Genre struct {
 	Genre string `json:"genre"`
 }
 
 type SMS struct {
-	*PhoneBase
-	*GenreBase
+	*Phone
+	*Genre
 }
 
 type EditCode struct {
@@ -28,11 +29,14 @@ type EditCode struct {
 // 发送短信
 func (sms *SMS) Send(code string) (string, error) {
 	core_url := "http://127.0.0.1:8090/send_sms/code/"
-	template_id := SMSTemplateId[sms.Genre]
-	data := url.Values{"phone": {sms.Phone}, "code": {code}, "template_id": {template_id}}
-	_, err := http.PostForm(core_url, data)
+	template_id := SMSTemplateId[sms.Genre.Genre]
+	data := url.Values{"phone": {sms.Phone.Phone}, "code": {code}, "template_id": {template_id}}
+	resp, err := http.PostForm(core_url, data)
+
 	if err != nil {
 		return "短信发送失败", err
+	} else if resp.StatusCode != 200 {
+		return "短信接口请求失败", errors.New("短信接口请求失败")
 	} else {
 		return "短信发送成功", nil
 	}

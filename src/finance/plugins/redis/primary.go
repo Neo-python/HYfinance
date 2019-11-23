@@ -42,16 +42,20 @@ func Set(key string, value interface{}, ex int) {
 	defer redis_client.Close()
 
 	redis_client.Do("SET", key, value, "EX", ex)
-
+	fmt.Println(key, value)
 }
 
-func Get(key string) string {
+func Get(key string) (interface{}, error) {
+	redis_client := RedisClient.Get()
+	defer redis_client.Close()
+	x, err := redis_client.Do("GET", key)
+	fmt.Println(key, x, err, "GET")
+	return redis.String(redis_client.Do("GET", key))
+}
+
+func Delete(key string) {
 	redis_client := RedisClient.Get()
 	defer redis_client.Close()
 
-	result, err := redis.String(redis_client.Do("GET", key))
-	if err != nil {
-		fmt.Println(err)
-	}
-	return result
+	redis.String(redis_client.Do("DEL", key))
 }
