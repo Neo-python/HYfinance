@@ -2,6 +2,7 @@
 package api
 
 import (
+	plugins_pkg "finance/plugins"
 	plugins "finance/plugins/common"
 	"finance/plugins/core_sms"
 	"finance/plugins/redis"
@@ -19,22 +20,25 @@ func SMSSend(context *gin.Context) {
 	context.Bind(&form)
 
 	if _, err := govalidator.ValidateStruct(&form); err != nil {
-		plugins.ApiExport.Error(context, err)
+		plugins.ApiExport(context).Error(1001, "表单验证失败", err)
+		return
 	}
 
 	// 发送短信前的准备工作
 	code := plugins.GenerateVerifyCode(4)
-	redis.Set(fmt.Sprint("Registered_", form.Phone), code, 30000)
+	key := fmt.Sprintf(plugins_pkg.Config.SMSCodeGenre[form.Genre], form.Phone)
+
+	redis.Set(key, code, 30000)
 
 	// 发送短信
 	sms := core_sms.SMS{&core_sms.Phone{form.Phone}, &core_sms.Genre{form.Genre}}
 	// 接口返回
 	if result, err := sms.Send(code); err != nil {
-		plugins.ApiExport.Error(context, err)
+		plugins.ApiExport(context).Error(5000, "短信接口调用失败", err)
 		return
 	} else {
 		println(result)
 	}
 
-	plugins.ApiExport.ApiExport(context)
+	plugins.ApiExport(context).ApiExport()
 }

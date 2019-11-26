@@ -4,6 +4,7 @@ import (
 	"finance/api"
 	_ "finance/models"
 	"finance/plugins"
+	"finance/plugins/jwt_auth"
 	"fmt"
 	"github.com/gin-gonic/gin"
 )
@@ -18,8 +19,22 @@ func main() {
 	fmt.Print(user.Name)
 	router := gin.Default()
 	fmt.Println(plugins.Config.SMSAppId)
-	router.POST("registered", api.Registered)
-	router.GET("core_sms", api.SMSSend)
-	router.GET("test", api.Test)
+
+	// 无需权限验证的接口
+	open := router.Group("")
+	{
+		open.POST("registered", api.Registered)
+		open.POST("edit_password", api.EditPassword)
+		open.GET("core_sms", api.SMSSend)
+		open.POST("sign_in", api.SignIn)
+	}
+
+	// 需要权限验证的接口
+	auth := router.Group("", jwt_auth.JWTAuth())
+	{
+		auth.GET("test", api.Test)
+		auth.GET("sign_out", api.SignOut)
+	}
+
 	router.Run()
 }

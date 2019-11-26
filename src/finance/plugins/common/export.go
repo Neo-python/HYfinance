@@ -21,6 +21,7 @@ type Export struct {
 	ErrorCodeStruct
 	Data map[string]interface{} `json:"data"`
 	MessageStruct
+	context *gin.Context
 }
 
 type ErrorExport struct {
@@ -39,21 +40,21 @@ func (export *Export) SetData(key string, value interface{}) {
 }
 
 // 接口正常返回
-func (export *Export) ApiExport(context *gin.Context) {
+func (export *Export) ApiExport() {
 	if export.Data == nil {
 		export.Data = map[string]interface{}{}
 	}
-	context.JSON(http.StatusOK, export)
-	context.Abort()
+	export.context.JSON(http.StatusOK, export)
+	export.context.Abort()
 }
 
 // 接口表单异常返回
-func (export *Export) Error(context *gin.Context, err error) {
+func (export *Export) Error(error_code int, message string, err error) {
 	error_export := ErrorExport{}
 	error_export.ErrorFields = map[string]interface{}{} // map类型字段 必须初始化
 
-	error_export.ErrorCode = 500
-	error_export.Message = "表单未能通过接口验证"
+	error_export.ErrorCode = error_code
+	error_export.Message = message
 
 	// 收集错误信息
 	fileds := strings.Split(err.Error(), ";")
@@ -66,15 +67,12 @@ func (export *Export) Error(context *gin.Context, err error) {
 		}
 
 	}
-	context.JSON(http.StatusOK, error_export)
-	context.Abort()
+	export.context.JSON(http.StatusOK, error_export)
+	export.context.Abort()
 }
 
-var ApiExport Export
-
-//func main() {
-//	export := Export{}
-//	var err error
-//	export.Error(err)
-//	fmt.Println("ok")
-//}
+func ApiExport(context *gin.Context) *Export {
+	export := new(Export)
+	export.context = context
+	return export
+}

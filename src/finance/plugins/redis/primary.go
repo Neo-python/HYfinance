@@ -48,8 +48,6 @@ func Set(key string, value interface{}, ex int) {
 func Get(key string) (interface{}, error) {
 	redis_client := RedisClient.Get()
 	defer redis_client.Close()
-	x, err := redis_client.Do("GET", key)
-	fmt.Println(key, x, err, "GET")
 	return redis.String(redis_client.Do("GET", key))
 }
 

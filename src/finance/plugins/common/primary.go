@@ -1,6 +1,9 @@
 package common
 
 import (
+	"crypto/sha1"
+	"encoding/hex"
+	plugins_pkg "finance/plugins"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -18,4 +21,11 @@ func GenerateVerifyCode(length int) string {
 		build.WriteString(string_number)
 	}
 	return build.String()
+}
+
+func SHA1(text string) string {
+	salt_text := text + plugins_pkg.Config.SecretKey
+	ctx := sha1.New()
+	ctx.Write([]byte(salt_text))
+	return hex.EncodeToString(ctx.Sum(nil))
 }

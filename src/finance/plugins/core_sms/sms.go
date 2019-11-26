@@ -7,7 +7,7 @@ import (
 )
 
 // 注册短信模板编号
-var SMSTemplateId map[string]string = map[string]string{"registered": "477438"}
+var SMSTemplateId map[string]string = map[string]string{"registered": "477438", "edit_password": "482880"}
 
 type Phone struct {
 	Phone string `json:"phone"`
