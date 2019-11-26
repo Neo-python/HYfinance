@@ -5,7 +5,6 @@ import (
 	"errors"
 	plugins_pkg "finance/plugins"
 	plugins "finance/plugins/common"
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"time"
