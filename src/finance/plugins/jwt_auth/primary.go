@@ -14,7 +14,7 @@ import (
 func checkToken(context *gin.Context) {
 	token := context.Request.Header.Get("Authorization")
 	if token == "" {
-		plugins.ApiExport(context).Error(4000, "未能从请求中获取用户身份信息.无法确认用户身份", errors.New("请求未携带token，无权限访问"))
+		plugins.ApiExport(context).Error(4005, "未能从请求中获取用户身份信息.无法确认用户身份", errors.New("请求未携带token，无权限访问"))
 		return
 	}
 	j := NewJWT()
@@ -23,15 +23,15 @@ func checkToken(context *gin.Context) {
 	if err != nil {
 		if err == TokenExpired {
 
-			plugins.ApiExport(context).Error(4001, "授权已过期", err)
+			plugins.ApiExport(context).Error(4002, "授权已过期", err)
 			return
 
 		}
-		plugins.ApiExport(context).Error(4002, "token错误,无法验证用户身份信息.", err)
+		plugins.ApiExport(context).Error(4001, "token错误,无法验证用户身份信息.", err)
 		return
 	}
 	if claims.AuthToken() != true {
-		plugins.ApiExport(context).Error(4003, "授权已过期", errors.New("授权已过期"))
+		plugins.ApiExport(context).Error(4002, "授权已过期", errors.New("授权已过期"))
 		return
 	}
 	// 继续交由下一个路由处理,并将解析出的信息传递下去

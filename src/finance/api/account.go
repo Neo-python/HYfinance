@@ -81,7 +81,7 @@ func SignOut(context *gin.Context) {
 	result, status := context.Get("claims")
 
 	if status != true {
-		plugins.ApiExport(context).Error(5004, "当前状态:未登录", errors.New("未登录"))
+		plugins.ApiExport(context).Error(4005, "当前状态:未登录", errors.New("未登录"))
 		return
 	}
 

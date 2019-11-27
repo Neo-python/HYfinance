@@ -34,7 +34,7 @@ func SMSSend(context *gin.Context) {
 	sms := core_sms.SMS{&core_sms.Phone{form.Phone}, &core_sms.Genre{form.Genre}}
 	// 接口返回
 	if result, err := sms.Send(code); err != nil {
-		plugins.ApiExport(context).Error(5000, "短信接口调用失败", err)
+		plugins.ApiExport(context).Error(5002, "短信接口调用失败", err)
 		return
 	} else {
 		println(result)
