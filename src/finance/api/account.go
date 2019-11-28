@@ -4,7 +4,6 @@ import (
 	"finance/models"
 	finance_model "finance/models/finance"
 	plugins "finance/plugins/common"
-	"finance/plugins/common/structs_copy"
 	"finance/plugins/jwt_auth"
 	"finance/validator"
 	"finance/validator/account"
@@ -36,7 +35,7 @@ func Registered(context *gin.Context) {
 	}
 
 	export := plugins.ApiExport(context)
-	export.SetData("finance", structs_copy.Map(&finance))
+	export.SetData("finance", finance.ToJson())
 	export.ApiExport()
 
 	// 注册完成后执行清理工作
