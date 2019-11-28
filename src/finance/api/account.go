@@ -1,12 +1,12 @@
 package api
 
 import (
-	"errors"
 	"finance/models"
 	finance_model "finance/models/finance"
 	plugins "finance/plugins/common"
 	"finance/plugins/common/structs_copy"
 	"finance/plugins/jwt_auth"
+	"finance/validator"
 	"finance/validator/account"
 	"github.com/gin-gonic/gin"
 )
@@ -17,15 +17,21 @@ func Registered(context *gin.Context) {
 	var form account.RegisteredForm
 	context.BindJSON(&form)
 
+	if err := validator.Valid.Struct(&form); err != nil {
+		// 表单验证失败,接口返回错误信息
+		plugins.ApiExport(context).FormError(err)
+		return
+	}
+
 	if _, err := form.Valid(); err != nil {
 		// 表单验证失败,接口返回错误信息
-		plugins.ApiExport(context).Error(1001, "表单验证失败", err)
+		plugins.ApiExport(context).Error(5011, err.Error())
 		return
 	}
 
 	finance := finance_model.Finance{Name: form.Name, Phone: form.Phone, Password: plugins.SHA1(form.Password)}
 	if err := models.DB.Create(&finance).Error; err != nil {
-		plugins.ApiExport(context).Error(1001, "手机号已被注册", err)
+		plugins.ApiExport(context).Error(5010, "手机号已被注册")
 		return
 	}
 
@@ -41,10 +47,17 @@ func Registered(context *gin.Context) {
 func EditPassword(context *gin.Context) {
 	var form account.EditPasswordForm
 	context.BindJSON(&form)
+
+	if err := validator.Valid.Struct(form); err != nil {
+		// 表单验证失败,接口返回错误信息
+		plugins.ApiExport(context).FormError(err)
+		return
+	}
+
 	finance, err := form.Valid()
 	if err != nil {
 		// 表单验证失败,接口返回错误信息
-		plugins.ApiExport(context).Error(1001, "表单验证失败", err)
+		plugins.ApiExport(context).Error(5011, err.Error())
 		return
 	}
 
@@ -63,15 +76,21 @@ func SignIn(context *gin.Context) {
 	var form account.SignInForm
 	context.BindJSON(&form)
 
+	if err := validator.Valid.Struct(form); err != nil {
+		// 表单验证失败,接口返回错误信息
+		plugins.ApiExport(context).FormError(err)
+		return
+	}
+
 	finance, err := form.Valid()
 	if err != nil {
-		plugins.ApiExport(context).Error(1001, "账号或密码填写错误", err)
+		plugins.ApiExport(context).Error(5011, err.Error())
 		return
 	}
 
 	export := plugins.ApiExport(context)
 	export.SetData("token", finance.Token())
-	export.SetData("finance", structs_copy.Map(&finance))
+	export.SetData("finance", finance.ToJson())
 	export.ApiExport()
 }
 
@@ -81,7 +100,7 @@ func SignOut(context *gin.Context) {
 	result, status := context.Get("claims")
 
 	if status != true {
-		plugins.ApiExport(context).Error(4005, "当前状态:未登录", errors.New("未登录"))
+		plugins.ApiExport(context).Error(4005, "当前状态:未登录")
 		return
 	}
 

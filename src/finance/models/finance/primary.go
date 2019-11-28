@@ -37,3 +37,10 @@ func (finance *Finance) Token() string {
 func (finance *Finance) RedisKey() string {
 	return fmt.Sprint("FinanceIat_", finance.Phone)
 }
+
+func (finance *Finance) ToJson() *map[string]interface{} {
+	data := make(map[string]interface{})
+	data["name"] = finance.Name
+	data["phone"] = finance.Phone
+	return &data
+}

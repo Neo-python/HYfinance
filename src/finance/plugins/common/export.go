@@ -2,6 +2,7 @@ package common
 
 import (
 	"github.com/gin-gonic/gin"
+	"gopkg.in/go-playground/validator.v9"
 	"net/http"
 	"strings"
 )
@@ -48,25 +49,47 @@ func (export *Export) ApiExport() {
 	export.context.Abort()
 }
 
-// 接口表单异常返回
-func (export *Export) Error(error_code int, message string, err error) {
+// 接口表单异常返回,错误码:1001
+// 表单验证错误专用,其他类型错误已经无法兼容此方法逻辑
+func (export *Export) FormError(err error) {
+	error_export := ErrorExport{}
+	error_export.ErrorFields = map[string]interface{}{} // map类型字段 必须初始化
+
+	error_export.ErrorCode = 1001
+
+	var error_message string
+	var filed_name string
+	var error_fields string
+	for _, err := range err.(validator.ValidationErrors) {
+		err_field := err.Field()
+		split_result := strings.Split(err_field, "~")
+		filed_name = split_result[0]
+		for _, item := range strings.Split(split_result[1], ";") {
+			item_split := strings.Split(item, ":")
+			key := item_split[0]
+			value := item_split[1]
+			if err.ActualTag() == key {
+				error_message = value
+				error_fields = err.StructField()
+				break
+			}
+
+		}
+
+	}
+	error_export.ErrorFields[error_fields] = error_message
+	error_export.Message = filed_name + error_message
+	export.context.JSON(http.StatusOK, error_export)
+	export.context.Abort()
+}
+
+func (export *Export) Error(error_code int, message string) {
 	error_export := ErrorExport{}
 	error_export.ErrorFields = map[string]interface{}{} // map类型字段 必须初始化
 
 	error_export.ErrorCode = error_code
 	error_export.Message = message
 
-	// 收集错误信息
-	fileds := strings.Split(err.Error(), ";")
-	for _, item := range fileds {
-		errorInfo := strings.Split(item, ":")
-		if len(errorInfo) > 1 {
-			error_export.ErrorFields[errorInfo[0]] = errorInfo[1]
-		} else {
-			error_export.ErrorFields[errorInfo[0]] = errorInfo[0]
-		}
-
-	}
 	export.context.JSON(http.StatusOK, error_export)
 	export.context.Abort()
 }

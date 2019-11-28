@@ -25,7 +25,7 @@ func main() {
 	{
 		open.POST("registered", api.Registered)
 		open.POST("edit_password", api.EditPassword)
-		open.GET("core_sms", api.SMSSend)
+		open.POST("/send_sms/code/", api.SMSSend)
 		open.POST("sign_in", api.SignIn)
 	}
 
@@ -34,6 +34,7 @@ func main() {
 	{
 		auth.GET("test", api.Test)
 		auth.GET("sign_out", api.SignOut)
+		auth.GET("query_area", api.QueryArea)
 	}
 
 	router.Run()

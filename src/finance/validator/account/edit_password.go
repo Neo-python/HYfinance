@@ -5,14 +5,13 @@ import (
 	"finance/models"
 	"finance/models/finance"
 	"finance/plugins/redis"
-	"github.com/asaskevich/govalidator"
 )
 
 type EditPasswordForm struct {
-	Phone          string `valid:"required" json:"phone" form:"phone"`
-	Password       string `valid:"required,stringlength(1|24),alphanum" json:"password" form:"password"`
-	RepeatPassword string `valid:"required,stringlength(1|24),alphanum" json:"repeat_password" form:"repeat_password"`
-	Code           string `valid:"required, stringlength(4|4)" json:"code" form:"code"`
+	Phone          string `validate:"required" json:"phone" form:"phone" error_message:"手机号~required:为必填项"`
+	Password       string `validate:"required,min=1,max=24" json:"password" form:"password" error_message:"密码~required:为必填项;min:最短长度为1位;max:最大长度为24位"`
+	RepeatPassword string `validate:"required,eqfield=Password" json:"repeat_password" form:"repeat_password" error_message:"重复密码~required:为必填项;eqfield:两次输入不一致,请检查后重试!"`
+	Code           string `validate:"required,len=4" json:"code" form:"code" error_message:"验证码~required:为必填项;len:长度为4位"`
 	AccountFormModel
 }
 
@@ -20,19 +19,14 @@ func (form *EditPasswordForm) Valid() (finance.Finance, error) {
 
 	var finance finance.Finance
 
-	if _, err := govalidator.ValidateStruct(form); err != nil {
-		// 表单验证失败,接口返回错误信息
-		return finance, err
-	}
-
 	redis_code, err := redis.Get(form.RedisCodeKey("edit_password", form.Phone))
 
 	if err != nil {
-		return finance, errors.New("code:验证码错误")
+		return finance, errors.New("验证码错误")
 	}
 
 	if redis_code != form.Code {
-		return finance, errors.New("phone:验证码错误")
+		return finance, errors.New("验证码错误")
 	}
 
 	if form.Password != form.RepeatPassword {
