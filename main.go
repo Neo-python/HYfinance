@@ -3,9 +3,7 @@ package main
 import (
 	"finance/api"
 	_ "finance/models"
-	"finance/plugins"
 	"finance/plugins/jwt_auth"
-	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,10 +13,7 @@ type User struct {
 }
 
 func main() {
-	user := User{Name: "a", Age: 1}
-	fmt.Print(user.Name)
 	router := gin.Default()
-	fmt.Println(plugins.Config.SMSAppId)
 
 	// 无需权限验证的接口
 	open := router.Group("")
@@ -37,5 +32,5 @@ func main() {
 		auth.GET("query_area", api.QueryArea)
 	}
 
-	router.Run()
+	router.Run("127.0.0.1:8095")
 }

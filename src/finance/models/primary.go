@@ -6,6 +6,7 @@ import (
 	"finance/models/order"
 	"finance/models/receiver"
 	"finance/models/sender"
+	"finance/plugins"
 	"fmt"
 	"github.com/jinzhu/gorm"
 )
@@ -15,7 +16,7 @@ import _ "github.com/jinzhu/gorm/dialects/mysql"
 var DB *gorm.DB
 
 func init() {
-	new_db, err := gorm.Open("mysql", "root:000000@tcp(127.0.0.1:3306)/HY?loc=Local&parseTime=true")
+	new_db, err := gorm.Open("mysql", plugins.Config.MysqlUrl)
 	if err != nil {
 		fmt.Println(err)
 		return
