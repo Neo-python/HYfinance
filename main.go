@@ -3,6 +3,7 @@ package main
 import (
 	"finance/api"
 	_ "finance/models"
+	_ "finance/models/init"
 	"finance/plugins/jwt_auth"
 	"github.com/gin-gonic/gin"
 )
@@ -30,6 +31,7 @@ func main() {
 		auth.GET("test", api.Test)
 		auth.GET("sign_out", api.SignOut)
 		auth.GET("query_area", api.QueryArea)
+		auth.POST("add_order", api.AddOrder)
 	}
 
 	router.Run("127.0.0.1:8095")

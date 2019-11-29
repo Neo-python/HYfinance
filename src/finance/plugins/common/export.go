@@ -59,7 +59,7 @@ func (export *Export) FormError(err error) {
 
 	var error_message string
 	var filed_name string
-	var error_fields string
+	//var error_fields string
 	for _, err := range err.(validator.ValidationErrors) {
 		err_field := err.Field()
 		split_result := strings.Split(err_field, "~")
@@ -67,17 +67,18 @@ func (export *Export) FormError(err error) {
 		for _, item := range strings.Split(split_result[1], ";") {
 			item_split := strings.Split(item, ":")
 			key := item_split[0]
-			value := item_split[1]
+			error_message = item_split[1]
 			if err.ActualTag() == key {
-				error_message = value
-				error_fields = err.StructField()
+				//error_message = value
+				//error_fields =
+				error_export.ErrorFields[err.StructField()] = key
 				break
 			}
 
 		}
 
 	}
-	error_export.ErrorFields[error_fields] = error_message
+
 	error_export.Message = filed_name + error_message
 	export.context.JSON(http.StatusOK, error_export)
 	export.context.Abort()
