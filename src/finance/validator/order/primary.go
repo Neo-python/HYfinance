@@ -78,13 +78,13 @@ func (form *AddOrderForm) GetReceiver() *receiver.FinanceReceiver {
 
 	// 无匹配项时创建新收货人
 	if receiver.ID == 0 {
-		receiver.ReceiverPhone = form.ReceiverPhone
-		receiver.ReceiverName = form.ReceiverName
+		receiver.Phone = form.ReceiverPhone
+		receiver.Name = form.ReceiverName
 
 	}
 	//更新地址与电话信息
-	receiver.ReceiverAddress = form.ReceiverAddress
-	receiver.ReceiverTel = form.ReceiverTel
+	receiver.Address = form.ReceiverAddress
+	receiver.Tel = form.ReceiverTel
 	models.DB.Save(&receiver)
 	return &receiver
 }
@@ -96,8 +96,8 @@ func (form *AddOrderForm) GetSender() *sender.FinanceSender {
 
 	// 无匹配项时创建新发货人
 	if sender.ID == 0 {
-		sender.SenderPhone = form.SenderPhone
-		sender.SenderCompanyName = form.SenderCompanyName
+		sender.Phone = form.SenderPhone
+		sender.CompanyName = form.SenderCompanyName
 
 	}
 	models.DB.Save(&sender)

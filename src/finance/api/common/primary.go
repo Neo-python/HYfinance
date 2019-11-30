@@ -1,5 +1,5 @@
 // 通用接口
-package api
+package common
 
 import (
 	"finance/models"

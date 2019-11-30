@@ -2,14 +2,17 @@ package receiver
 
 import "github.com/jinzhu/gorm"
 
-type ReceiverModel struct {
-	ReceiverName    string `json:"receiver_name"`
-	ReceiverPhone   string `json:"receiver_phone"`
-	ReceiverAddress string `json:"receiver_address"`
-	ReceiverTel     string `json:"receiver_tel"`
-}
-
 type FinanceReceiver struct {
 	gorm.Model
-	ReceiverModel
+	Name    string `json:"name"`
+	Phone   string `json:"phone"`
+	Address string `json:"address"`
+	Tel     string `json:"tel"`
+}
+
+type FinanceReceiverJson struct {
+	Name    string `json:"name"`
+	Phone   string `json:"phone"`
+	Address string `json:"address"`
+	Tel     string `json:"tel"`
 }

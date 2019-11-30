@@ -9,8 +9,13 @@ import (
 
 type FinanceOrder struct {
 	gorm.Model
-	*receiver.ReceiverModel
-	*sender.SenderModel
+	ReceiverName      string `json:"receiver_name"`
+	ReceiverPhone     string `json:"receiver_phone"`
+	ReceiverAddress   string `json:"receiver_address"`
+	ReceiverTel       string `json:"receiver_tel"`
+	SenderCompanyName string `json:"sender_company_name"`
+	SenderPhone       string `json:"sender_phone"`
+	SenderRemark      string `json:"sender_remark"`
 
 	FinanceID uint `json:"finance_id"`
 
