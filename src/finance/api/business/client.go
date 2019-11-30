@@ -19,7 +19,7 @@ func QuerySender(context *gin.Context) {
 	var senders []models_sender.FinanceSender
 	var senders_json []models_sender.FinanceSenderJson
 	if form.Name != "" {
-		db = db.Where("name LIKE ?", fmt.Sprintf("%%%s%%", form.Name))
+		db = db.Where("company_name LIKE ?", fmt.Sprintf("%%%s%%", form.Name))
 	}
 
 	if form.Phone != "" {
