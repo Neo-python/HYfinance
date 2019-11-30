@@ -26,14 +26,13 @@ func AddOrder(context *gin.Context) {
 	// 自定义逻辑验证
 	extra_data, err := form.Valid()
 	if err != nil {
-		plugins.ApiExport(context).Error(5400, "货物信息存在非法字段")
+		plugins.ApiExport(context).Error(5400, err.Error())
 		return
 	}
 
 	// 获取新增订单财务人信息
 	finance, err := common.GetFinance(context)
 	if err != nil {
-		fmt.Println(err)
 		plugins.ApiExport(context).Error(4005, "用户未登录,请在登录后尝试.")
 		return
 	}

@@ -114,7 +114,7 @@ func (form *AddOrderForm) PerfectArea(extra_data *AddOrderFormData) error {
 	models.DB.First(&city, form.CityId)
 	models.DB.First(&area, form.AreaId)
 
-	if province.ID == 0 || city.ID == 0 || area.ID == 0 {
+	if (province.ID == 0 || city.ID == 0 || area.ID == 0) || (area.SuperiorId != city.ID || city.SuperiorId != province.ID) {
 		return errors.New("地区编号错误!")
 	} else {
 		extra_data.Province = &province
