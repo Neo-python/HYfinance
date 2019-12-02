@@ -6,13 +6,13 @@ import (
 	plugins "finance/plugins/common"
 	"finance/validator"
 	"finance/validator/common"
-	"finance/validator/order"
+	forms "finance/validator/order"
 	"github.com/gin-gonic/gin"
 )
 
 // 新增订单
 func AddOrder(context *gin.Context) {
-	var form order.AddOrderForm
+	var form forms.AddOrderForm
 	context.ShouldBind(&form)
 	// 基础验证
 	if err := validator.Valid.Struct(&form); err != nil {
@@ -59,4 +59,39 @@ func AddOrder(context *gin.Context) {
 	go order.AddDetails(form.Products)
 	plugins.ApiExport(context).ApiExport()
 	return
+}
+
+// 订单列表
+func OrderList(context *gin.Context) {
+	var form forms.OrderListForm
+	context.ShouldBind(&form)
+
+	if err := validator.Valid.Struct(&form); err != nil {
+		plugins.ApiExport(context).FormError(err)
+		return
+	}
+
+	var orders []models_order.FinanceOrder
+	var total int
+	query := form.Query()
+
+	query.Count(&total)
+	query.Offset((form.Page - 1) * form.Limit).Limit(form.Limit).Find(&orders)
+
+	plugins.ApiExport(context).ListPageExport(orders, form.Page, total)
+}
+
+// 订单详情
+func OrderInfo(context *gin.Context) {
+
+}
+
+// 编辑订单
+func OrderEdit(context *gin.Context) {
+
+}
+
+// 删除订单
+func OrderDelete(context *gin.Context) {
+
 }

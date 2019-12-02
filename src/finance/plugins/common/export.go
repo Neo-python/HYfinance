@@ -49,6 +49,19 @@ func (export *Export) ApiExport() {
 	export.context.Abort()
 }
 
+// 列表页返回
+func (export *Export) ListPageExport(items interface{}, page int, total int) {
+	if export.Data == nil {
+		export.Data = map[string]interface{}{}
+	}
+	export.SetData("items", items)
+	export.SetData("page", page)
+	export.SetData("total", total)
+	export.context.JSON(http.StatusOK, export)
+	export.context.Abort()
+
+}
+
 // 接口表单异常返回,错误码:1001
 // 表单验证错误专用,其他类型错误已经无法兼容此方法逻辑
 func (export *Export) FormError(err error) {

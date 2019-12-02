@@ -12,15 +12,15 @@ import (
 
 type AddOrderForm struct {
 	// 收货人相关
-	ReceiverName    string `json:"receiver_name" validate:"required" error_message:"收货人名~required:此字段必须填写"`
+	ReceiverName    string `json:"receiver_name" validate:"required,max=10" error_message:"收货人名~required:此字段必须填写;max:最大长度为10"`
 	ReceiverPhone   string `json:"receiver_phone" validate:"required,max=11" error_message:"收货人手机号~required:此字段必须填写;max:最大长度为11"`
-	ReceiverAddress string `json:"receiver_address"`
-	ReceiverTel     string `json:"receiver_tel"`
+	ReceiverAddress string `json:"receiver_address" validate:"max=255" error_message:"收货人地址~max:最大长度为255"`
+	ReceiverTel     string `json:"receiver_tel" validate:"max=13" error_message:"收货人电话~max:最大长度为13"`
 
 	// 发货人相关
 	SenderCompanyName string `json:"sender_company_name" validate:"max=10" error_message:"发货单位名称~max:最大长度为10"`
 	SenderPhone       string `json:"sender_phone" validate:"required,max=11" error_message:"发货单位手机号~required:此字段必须填写;max:最大长度为11"`
-	SenderRemark      string `json:"sender_remark"`
+	SenderRemark      string `json:"sender_remark" validate:"max=255" error_message:"发货人备注~max:最大长度为255"`
 
 	// 收货人地址相关
 	ProvinceId uint `json:"province_id" validate:"required" error_message:"省级信息~required:此字段必须填写"`
@@ -74,7 +74,7 @@ func (form *AddOrderForm) ValidProductInformation() {
 // 更新地址与电话信息
 func (form *AddOrderForm) GetReceiver() *receiver.FinanceReceiver {
 	var receiver receiver.FinanceReceiver
-	models.DB.First(&receiver, "receiver_phone=? AND receiver_name=?", form.ReceiverPhone, form.ReceiverName)
+	models.DB.First(&receiver, "phone=? AND name=?", form.ReceiverPhone, form.ReceiverName)
 
 	// 无匹配项时创建新收货人
 	if receiver.ID == 0 {
@@ -92,7 +92,7 @@ func (form *AddOrderForm) GetReceiver() *receiver.FinanceReceiver {
 // 获取发货人
 func (form *AddOrderForm) GetSender() *sender.FinanceSender {
 	var sender sender.FinanceSender
-	models.DB.First(&sender, "sender_phone=? AND sender_company_name=?", form.SenderPhone, form.SenderCompanyName)
+	models.DB.First(&sender, "phone=? AND company_name=?", form.SenderPhone, form.SenderCompanyName)
 
 	// 无匹配项时创建新发货人
 	if sender.ID == 0 {
@@ -100,6 +100,7 @@ func (form *AddOrderForm) GetSender() *sender.FinanceSender {
 		sender.CompanyName = form.SenderCompanyName
 
 	}
+	sender.Remark = form.SenderRemark
 	models.DB.Save(&sender)
 	return &sender
 }
