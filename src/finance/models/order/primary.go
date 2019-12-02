@@ -53,3 +53,7 @@ func (order *FinanceOrder) AddDetails(products []*Product) {
 		models.DB.Save(&detail)
 	}
 }
+
+func (order *FinanceOrder) DeleteAllDetail() {
+	models.DB.Delete(FinanceOrderDetail{}, "order_id=?", order.ID)
+}

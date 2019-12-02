@@ -31,11 +31,13 @@ func BusinessApiRegistered(engine *gin.Engine) {
 
 	{
 		auth.GET("/order/list", business.OrderList)
+		auth.GET("/order/info", business.OrderInfo)
 		auth.GET("/query_receiver", business.QueryReceiver)
 		auth.GET("/query_sender", business.QuerySender)
 	}
 	{
 		auth.POST("/order/add", business.AddOrder)
+		auth.POST("/order/edit", business.OrderEdit)
 	}
 
 }

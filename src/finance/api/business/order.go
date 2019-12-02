@@ -21,8 +21,7 @@ func AddOrder(context *gin.Context) {
 	}
 
 	// 自定义逻辑验证
-	extra_data, err := form.Valid()
-	if err != nil {
+	if err := form.Valid(); err != nil {
 		plugins.ApiExport(context).Error(5400, err.Error())
 		return
 	}
@@ -35,24 +34,25 @@ func AddOrder(context *gin.Context) {
 	}
 
 	order := models_order.FinanceOrder{
-		Receiver:          extra_data.Receiver,
-		ReceiverName:      extra_data.Receiver.Name,
-		ReceiverPhone:     extra_data.Receiver.Phone,
-		ReceiverAddress:   extra_data.Receiver.Address,
-		ReceiverTel:       extra_data.Receiver.Tel,
-		Sender:            extra_data.Sender,
-		SenderCompanyName: extra_data.Sender.CompanyName,
-		SenderPhone:       extra_data.Sender.Phone,
-		SenderRemark:      extra_data.Sender.Remark,
+		Receiver:          form.ExtraData.Receiver,
+		ReceiverName:      form.ExtraData.Receiver.Name,
+		ReceiverPhone:     form.ExtraData.Receiver.Phone,
+		ReceiverAddress:   form.ExtraData.Receiver.Address,
+		ReceiverTel:       form.ExtraData.Receiver.Tel,
+		Sender:            form.ExtraData.Sender,
+		SenderCompanyName: form.ExtraData.Sender.CompanyName,
+		SenderPhone:       form.ExtraData.Sender.Phone,
+		SenderRemark:      form.ExtraData.Sender.Remark,
 		FinanceID:         finance.ID,
-		ProvinceId:        extra_data.Province.ID,
-		ProvinceName:      extra_data.Province.Name,
-		CityId:            extra_data.City.ID,
-		CityName:          extra_data.City.Name,
-		AreaId:            extra_data.Area.ID,
-		AreaName:          extra_data.Area.Name,
-		TotalPrice:        extra_data.Price}
+		ProvinceId:        form.ExtraData.Province.ID,
+		ProvinceName:      form.ExtraData.Province.Name,
+		CityId:            form.ExtraData.City.ID,
+		CityName:          form.ExtraData.City.Name,
+		AreaId:            form.ExtraData.Area.ID,
+		AreaName:          form.ExtraData.Area.Name,
+		TotalPrice:        form.ExtraData.Price}
 
+	// 保存修改
 	models.DB.Save(&order)
 
 	// 批量增加订单货物信息
@@ -83,12 +83,70 @@ func OrderList(context *gin.Context) {
 
 // 订单详情
 func OrderInfo(context *gin.Context) {
+	var form forms.OrderInfo
+	context.ShouldBind(&form)
 
+	if err := validator.Valid.Struct(&form); err != nil {
+		plugins.ApiExport(context).FormError(err)
+		return
+	}
+
+	var order models_order.FinanceOrder
+
+	query := form.Query()
+	query.Find(&order)
+	export := plugins.ApiExport(context)
+	export.SetData("order", order)
+	export.ApiExport()
 }
 
 // 编辑订单
 func OrderEdit(context *gin.Context) {
+	var form forms.OrderEditForm
+	context.ShouldBind(&form)
 
+	if err := validator.Valid.Struct(&form); err != nil {
+		plugins.ApiExport(context).FormError(err)
+		return
+	}
+
+	if err := form.Valid(); err != nil {
+		plugins.ApiExport(context).Error(5011, err.Error())
+		return
+	}
+
+	// 获取新增订单财务人信息
+	finance, err := common.GetFinance(context)
+	if err != nil {
+		plugins.ApiExport(context).Error(4005, "用户未登录,请在登录后尝试.")
+		return
+	}
+
+	form.Order.Receiver = form.ExtraData.Receiver
+	form.Order.ReceiverName = form.ExtraData.Receiver.Name
+	form.Order.ReceiverPhone = form.ExtraData.Receiver.Phone
+	form.Order.ReceiverAddress = form.ExtraData.Receiver.Address
+	form.Order.ReceiverTel = form.ExtraData.Receiver.Tel
+	form.Order.Sender = form.ExtraData.Sender
+	form.Order.SenderCompanyName = form.ExtraData.Sender.CompanyName
+	form.Order.SenderPhone = form.ExtraData.Sender.Phone
+	form.Order.SenderRemark = form.ExtraData.Sender.Remark
+	form.Order.FinanceID = finance.ID
+	form.Order.ProvinceId = form.ExtraData.Province.ID
+	form.Order.ProvinceName = form.ExtraData.Province.Name
+	form.Order.CityId = form.ExtraData.City.ID
+	form.Order.CityName = form.ExtraData.City.Name
+	form.Order.AreaId = form.ExtraData.Area.ID
+	form.Order.AreaName = form.ExtraData.Area.Name
+
+	// 保存修改
+	models.DB.Save(&form.Order)
+
+	// 先删除旧货物详情再添加
+	form.Order.DeleteAllDetail()
+	go form.Order.AddDetails(form.Products)
+
+	plugins.ApiExport(context).ApiExport()
 }
 
 // 删除订单
