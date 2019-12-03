@@ -7,6 +7,7 @@ import (
 	"finance/validator"
 	"finance/validator/common"
 	forms "finance/validator/order"
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -151,5 +152,28 @@ func OrderEdit(context *gin.Context) {
 
 // 删除订单
 func OrderDelete(context *gin.Context) {
+
+	var form forms.OrderDeleteForm
+	context.ShouldBind(&form)
+
+	if err := validator.Valid.Struct(&form); err != nil {
+		plugins.ApiExport(context).FormError(err)
+		return
+	}
+
+	var order models_order.FinanceOrder
+
+	query := form.Query()
+
+	if err := query.Find(&order, form.OrderId).Error; err != nil {
+		fmt.Println(err.Error())
+		plugins.ApiExport(context).Error(5011, "订单编号未找到")
+		return
+	}
+
+	order.DeleteAllDetail()
+	models.DB.Unscoped().Delete(order)
+
+	plugins.ApiExport(context).ApiExport()
 
 }

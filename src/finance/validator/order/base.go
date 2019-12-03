@@ -5,12 +5,22 @@ import (
 	"finance/models"
 	"finance/models/area"
 	"finance/models/order"
+	models_order "finance/models/order"
 	"finance/models/receiver"
 	"finance/models/sender"
+	"github.com/jinzhu/gorm"
 )
 
 type OrderIdBase struct {
 	OrderId uint `json:"order_id" form:"order_id" validate:"required" error_message:"订单编号~required:未选择,请选择后重试."`
+}
+
+func (form *OrderIdBase) Query() *gorm.DB {
+	query := models.DB.Model(models_order.FinanceOrder{})
+
+	query = query.Where("id=?", form.OrderId)
+
+	return query
 }
 
 type OrderFormBase struct {

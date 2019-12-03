@@ -1,5 +1,5 @@
 package order
 
-type OrderInfo struct {
+type OrderDeleteForm struct {
 	OrderIdBase
 }

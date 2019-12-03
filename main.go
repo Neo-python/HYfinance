@@ -40,6 +40,10 @@ func BusinessApiRegistered(engine *gin.Engine) {
 		auth.POST("/order/edit", business.OrderEdit)
 	}
 
+	{
+		auth.DELETE("/order/delete", business.OrderDelete)
+	}
+
 }
 
 // 注册通用api
