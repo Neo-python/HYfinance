@@ -15,6 +15,7 @@ type Finance struct {
 	Name     string `json:"name"`
 	Phone    string `json:"phone" gorm:"unique_index"`
 	Password string `structs:",remove"`
+	Level    int    `json:"level" gorm:"default:1"`
 }
 
 // 生成token
@@ -26,7 +27,8 @@ func (finance *Finance) Token() string {
 		ID:    strconv.Itoa(int(finance.ID)),
 		Name:  finance.Name,
 		Phone: finance.Phone,
-		Iat:   iat})
+		Iat:   iat,
+		Level: finance.Level})
 
 	redis.Set(finance.RedisKey(), iat, plugins.Config.JWTExpired)
 

@@ -12,6 +12,7 @@ import (
 
 // 检查与校验token
 func checkToken(context *gin.Context) {
+	context.Header("Access-Control-Allow-Headers", "*")
 	token := context.Request.Header.Get("Authorization")
 	if token == "" {
 		plugins.ApiExport(context).Error(4005, "未能从请求中获取用户身份信息.无法确认用户身份")
@@ -43,6 +44,12 @@ func JWTAuth() gin.HandlerFunc {
 	return checkToken
 }
 
+func Cors() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		context.Header("Access-Control-Allow-Origin", "*")
+	}
+}
+
 // JWT 签名结构
 type JWT struct {
 	SigningKey []byte
@@ -62,6 +69,7 @@ type CustomClaims struct {
 	Name  string `json:"name"`
 	Phone string `json:"phone"`
 	Iat   string `json:"iat"`
+	Level int    `json:"level"`
 	jwt.StandardClaims
 }
 

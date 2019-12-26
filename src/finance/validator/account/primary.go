@@ -15,7 +15,7 @@ type AccountFormModel struct {
 
 func (form *AccountFormModel) RedisCodeKey(genre string, phone string) string {
 	// 生成redis短信验证码缓存键名
-	redis_key := fmt.Sprintf(plugins.Config.SMSCodeGenre["edit_password"], phone)
+	redis_key := fmt.Sprintf(plugins.Config.SMSCodeGenre[genre], phone)
 	return redis_key
 }
 

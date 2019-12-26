@@ -3,6 +3,7 @@ package account
 import (
 	"errors"
 	"finance/plugins/redis"
+	"fmt"
 )
 
 type RegisteredForm struct {
@@ -14,10 +15,12 @@ type RegisteredForm struct {
 }
 
 func (form *RegisteredForm) Valid() (bool, error) {
-
-	redis_code, err := redis.Get(form.RedisCodeKey("registered", form.Phone))
+	redis_key := form.RedisCodeKey("registered", form.Phone)
+	redis_code, err := redis.Get(redis_key)
 
 	if err != nil {
+
+		fmt.Println(err.Error(), redis_key)
 		return false, errors.New("验证码错误")
 	}
 

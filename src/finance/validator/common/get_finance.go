@@ -17,11 +17,10 @@ func GetFinance(context *gin.Context) (*finance.Finance, error) {
 		return &finance, errors.New("未能获取用户")
 	}
 
-	// 清理redis token.iat 缓存
 	claims, status := result.(*jwt_auth.CustomClaims)
 
 	if status != true {
-		return &finance, errors.New("未能获取用户")
+		return &finance, errors.New("用户数据异常,请重新登录!")
 	}
 
 	// 操作数据库

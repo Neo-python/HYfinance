@@ -1,13 +1,18 @@
 package receiver
 
-import "github.com/jinzhu/gorm"
+import (
+	"time"
+)
 
 type FinanceReceiver struct {
-	gorm.Model
-	Name    string `json:"name"`
-	Phone   string `json:"phone"`
-	Address string `json:"address"`
-	Tel     string `json:"tel"`
+	ID        uint `gorm:"primary_key"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt *time.Time `sql:"index"`
+	Name      string     `json:"name"`
+	Phone     string     `json:"phone"`
+	Address   string     `json:"address"`
+	Tel       string     `json:"tel"`
 }
 
 type FinanceReceiverJson struct {

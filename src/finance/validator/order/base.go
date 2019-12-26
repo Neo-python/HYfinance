@@ -25,7 +25,7 @@ func (form *OrderIdBase) Query() *gorm.DB {
 
 type OrderFormBase struct {
 	// 收货人相关
-	ReceiverName    string `json:"receiver_name" validate:"required,max=10" error_message:"收货人名~required:此字段必须填写;max:最大长度为10"`
+	ReceiverName    string `json:"receiver_name" validate:"required,max=20" error_message:"收货人名~required:此字段必须填写;max:最大长度为20"`
 	ReceiverPhone   string `json:"receiver_phone" validate:"required,max=11" error_message:"收货人手机号~required:此字段必须填写;max:最大长度为11"`
 	ReceiverAddress string `json:"receiver_address" validate:"max=255" error_message:"收货人地址~max:最大长度为255"`
 	ReceiverTel     string `json:"receiver_tel" validate:"max=13" error_message:"收货人电话~max:最大长度为13"`

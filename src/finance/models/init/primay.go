@@ -19,6 +19,7 @@ func init() {
 
 	// FinanceOrder
 	models.DB.AutoMigrate(&order.FinanceOrder{})
+
 	//new_db.Model(&order.FinanceOrder{}).AddForeignKey("province_id", "area(id)", "no action", "no action")
 	//new_db.Model(&order.FinanceOrder{}).AddForeignKey("city_id", "area(id)", "no action", "no action")
 	//new_db.Model(&order.FinanceOrder{}).AddForeignKey("area_id", "area(id)", "no action", "no action")
