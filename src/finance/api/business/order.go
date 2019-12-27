@@ -51,8 +51,7 @@ func AddOrder(context *gin.Context) {
 		CityId:            form.ExtraData.City.ID,
 		CityName:          form.ExtraData.City.Name,
 		AreaId:            form.ExtraData.Area.ID,
-		AreaName:          form.ExtraData.Area.Name,
-		TotalPrice:        form.ExtraData.Price}
+		AreaName:          form.ExtraData.Area.Name}
 
 	// 保存修改
 	models.DB.Save(&order)
@@ -188,8 +187,8 @@ func OrderDelete(context *gin.Context) {
 
 }
 
-// 查看订单总价,费用
-func OrderTotalPrice(context *gin.Context) {
+// 查看订单预期收费与实际收费
+func OrderAmount(context *gin.Context) {
 	var form forms.OrderInfo
 	context.ShouldBind(&form)
 
@@ -203,7 +202,33 @@ func OrderTotalPrice(context *gin.Context) {
 	query.Find(&order)
 	if order.ID != 0 {
 		export := plugins.ApiExport(context)
-		export.SetData("total_price", order.TotalPrice)
+		export.SetData("expected_amount", order.ExpectedAmount)
+		export.SetData("actual_amount", order.ActualAmount)
+		export.ApiExport()
+	} else {
+		plugins.ApiExport(context).Error(5011, "订单未找到")
+	}
+}
+
+// 修改订单金额
+func OrderAmountEdit(context *gin.Context) {
+	var form forms.OrderAmountEditForm
+	context.BindJSON(&form)
+
+	if err := validator.Valid.Struct(&form); err != nil {
+		plugins.ApiExport(context).FormError(err)
+		return
+	}
+
+	var order models_order.FinanceOrder
+	query := form.Query()
+	query.Find(&order)
+	if order.ID != 0 {
+		order.ExpectedAmount = form.ExpectedAmount
+		order.ActualAmount = form.ActualAmount
+		// 保存修改
+		models.DB.Save(&order)
+		export := plugins.ApiExport(context)
 		export.ApiExport()
 	} else {
 		plugins.ApiExport(context).Error(5011, "订单未找到")

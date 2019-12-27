@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// 等级权限验证中间件
 func LevelAuth(level int) gin.HandlerFunc {
 	return func(context *gin.Context) {
 		checkToken(context)

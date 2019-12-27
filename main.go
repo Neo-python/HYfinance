@@ -104,8 +104,10 @@ func BusinessApiRegistered(engine *gin.Engine) {
 	level_auth := engine.Group(relative_path, jwt_auth.LevelAuth(2))
 
 	{
-		engine.Routes()
-		level_auth.GET("/order/info/total_price", business.OrderTotalPrice)
+		level_auth.GET("/order/info/amount", business.OrderAmount)
+	}
+	{
+		level_auth.POST("/order/amount/edit", business.OrderAmountEdit)
 	}
 
 }

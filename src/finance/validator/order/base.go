@@ -43,7 +43,6 @@ type OrderFormBase struct {
 	// 订单辅助信息
 	Deliver            int                      `json:"deliver"`
 	PaymentMethod      int                      `json:"payment_method"`
-	TotalPrice         float64                  `json:"total_price"`
 	ProductInformation []map[string]interface{} `json:"product_information" validate:"required" error_message:"货物信息~required:需要填写"`
 	Products           []*order.Product
 }
@@ -60,7 +59,6 @@ type OrderFormExtraData struct {
 	Province *area.Area
 	City     *area.Area
 	Area     *area.Area
-	Price    float64
 }
 
 // 完善地区信息

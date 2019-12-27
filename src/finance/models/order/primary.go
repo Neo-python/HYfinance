@@ -37,10 +37,11 @@ type FinanceOrder struct {
 	AreaId   uint   `json:"area_id"`
 	AreaName string `json:"area_name"`
 
-	Deliver       int                  `json:"deliver"`
-	PaymentMethod int                  `json:"payment_method"`
-	TotalPrice    float64              `json:"-"`
-	Details       []FinanceOrderDetail `gorm:"ForeignKey:OrderId"`
+	Deliver        int                  `json:"deliver"`
+	PaymentMethod  int                  `json:"payment_method"`
+	ExpectedAmount float64              `json:"_"`
+	ActualAmount   float64              `json:"-"`
+	Details        []FinanceOrderDetail `gorm:"ForeignKey:OrderId"`
 }
 
 // 批量插入订单详情
