@@ -17,7 +17,7 @@ func QuerySender(context *gin.Context) {
 
 	var db = models.DB.Limit(10)
 	var senders []models_sender.FinanceSender
-	var senders_json []models_sender.FinanceSenderJson
+	senders_json := make([]models_sender.FinanceSenderJson, 0)
 	if form.Name != "" {
 		db = db.Where("company_name LIKE ?", fmt.Sprintf("%%%s%%", form.Name))
 	}
@@ -41,7 +41,7 @@ func QuerySender(context *gin.Context) {
 	}
 
 	export := common.ApiExport(context)
-	export.SetData("senders", senders_json)
+	export.SetData("items", senders_json)
 	export.ApiExport()
 }
 
@@ -52,7 +52,7 @@ func QueryReceiver(context *gin.Context) {
 
 	var db = models.DB.Limit(10)
 	var receivers []models_receiver.FinanceReceiver
-	var receivers_json []models_receiver.FinanceReceiverJson
+	receivers_json := make([]models_receiver.FinanceReceiverJson, 0)
 	if form.Name != "" {
 		db = db.Where("name LIKE ?", fmt.Sprintf("%%%s%%", form.Name))
 	}
@@ -77,7 +77,7 @@ func QueryReceiver(context *gin.Context) {
 	}
 
 	export := common.ApiExport(context)
-	export.SetData("receivers", receivers_json)
+	export.SetData("items", receivers_json)
 	export.ApiExport()
 
 }

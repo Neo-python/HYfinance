@@ -12,7 +12,8 @@ import (
 )
 
 type OrderIdBase struct {
-	OrderId uint `json:"order_id" form:"order_id" validate:"required" error_message:"订单编号~required:未选择,请选择后重试."`
+	OrderId   uint `json:"order_id" form:"order_id" validate:"required" error_message:"订单编号~required:未选择,请选择后重试."`
+	FormOrder models_order.FinanceOrder
 }
 
 func (form *OrderIdBase) Query() *gorm.DB {
@@ -21,6 +22,21 @@ func (form *OrderIdBase) Query() *gorm.DB {
 	query = query.Where("id=?", form.OrderId)
 
 	return query
+}
+
+// 复用订单数据
+func (form *OrderIdBase) Order() *models_order.FinanceOrder {
+	if form.FormOrder.ID == 0 {
+		form.FormOrder = *form.GetOrder()
+	}
+
+	return &form.FormOrder
+}
+
+func (form *OrderIdBase) GetOrder() *models_order.FinanceOrder {
+	var order models_order.FinanceOrder
+	models.DB.First(&order, form.OrderId)
+	return &order
 }
 
 type OrderFormBase struct {
@@ -41,8 +57,8 @@ type OrderFormBase struct {
 	AreaId     uint `json:"area_id" validate:"required" error_message:"区级信息~required:此字段必须填写"`
 
 	// 订单辅助信息
-	Deliver            int                      `json:"deliver"`
-	PaymentMethod      int                      `json:"payment_method"`
+	Deliver            int                      `json:"deliver" validate:"required" error_message:"交付方式~required:此字段必须填写"`
+	PaymentMethod      int                      `json:"payment_method" validate:"required" error_message:"付款方式~required:此字段必须填写"`
 	ProductInformation []map[string]interface{} `json:"product_information" validate:"required" error_message:"货物信息~required:需要填写"`
 	Products           []*order.Product
 }

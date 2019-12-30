@@ -7,7 +7,6 @@ import (
 	"finance/validator"
 	"finance/validator/common"
 	forms "finance/validator/order"
-	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -51,7 +50,9 @@ func AddOrder(context *gin.Context) {
 		CityId:            form.ExtraData.City.ID,
 		CityName:          form.ExtraData.City.Name,
 		AreaId:            form.ExtraData.Area.ID,
-		AreaName:          form.ExtraData.Area.Name}
+		AreaName:          form.ExtraData.Area.Name,
+		Deliver:           form.Deliver,
+		PaymentMethod:     form.PaymentMethod}
 
 	// 保存修改
 	models.DB.Save(&order)
@@ -73,10 +74,9 @@ func OrderList(context *gin.Context) {
 	}
 
 	var orders []models_order.FinanceOrder
-	var total int
-	query := form.Query().Preload("Details")
+	query := form.Query()
 
-	query.Count(&total)
+	query.Count(&form.Total)
 	query.Offset((form.Page - 1) * form.Limit).Limit(form.Limit).Find(&orders)
 
 	orders_json := []map[string]interface{}{}
@@ -84,7 +84,7 @@ func OrderList(context *gin.Context) {
 		orders_json = append(orders_json, item.ToJson())
 	}
 
-	plugins.ApiExport(context).ListPageExport(orders_json, form.Page, total)
+	plugins.ApiExport(context).ListPageExport(orders_json, form.Page, form.Total)
 }
 
 // 订单详情
@@ -97,9 +97,8 @@ func OrderInfo(context *gin.Context) {
 		return
 	}
 
-	var order models_order.FinanceOrder
-	query := form.Query().Preload("Details")
-	query.Find(&order)
+	order := form.Order()
+	order.QueryDetails()
 	if order.ID != 0 {
 		export := plugins.ApiExport(context)
 		export.SetData("order", order.ToJson())
@@ -131,30 +130,30 @@ func OrderEdit(context *gin.Context) {
 		plugins.ApiExport(context).Error(4005, "用户未登录,请在登录后尝试.")
 		return
 	}
-
-	form.Order.Receiver = *form.ExtraData.Receiver
-	form.Order.ReceiverName = form.ExtraData.Receiver.Name
-	form.Order.ReceiverPhone = form.ExtraData.Receiver.Phone
-	form.Order.ReceiverAddress = form.ExtraData.Receiver.Address
-	form.Order.ReceiverTel = form.ExtraData.Receiver.Tel
-	form.Order.Sender = *form.ExtraData.Sender
-	form.Order.SenderCompanyName = form.ExtraData.Sender.CompanyName
-	form.Order.SenderPhone = form.ExtraData.Sender.Phone
-	form.Order.SenderRemark = form.ExtraData.Sender.Remark
-	form.Order.FinanceID = finance.ID
-	form.Order.ProvinceId = form.ExtraData.Province.ID
-	form.Order.ProvinceName = form.ExtraData.Province.Name
-	form.Order.CityId = form.ExtraData.City.ID
-	form.Order.CityName = form.ExtraData.City.Name
-	form.Order.AreaId = form.ExtraData.Area.ID
-	form.Order.AreaName = form.ExtraData.Area.Name
+	order := form.Order()
+	order.Receiver = *form.ExtraData.Receiver
+	order.ReceiverName = form.ExtraData.Receiver.Name
+	order.ReceiverPhone = form.ExtraData.Receiver.Phone
+	order.ReceiverAddress = form.ExtraData.Receiver.Address
+	order.ReceiverTel = form.ExtraData.Receiver.Tel
+	order.Sender = *form.ExtraData.Sender
+	order.SenderCompanyName = form.ExtraData.Sender.CompanyName
+	order.SenderPhone = form.ExtraData.Sender.Phone
+	order.SenderRemark = form.ExtraData.Sender.Remark
+	order.FinanceID = finance.ID
+	order.ProvinceId = form.ExtraData.Province.ID
+	order.ProvinceName = form.ExtraData.Province.Name
+	order.CityId = form.ExtraData.City.ID
+	order.CityName = form.ExtraData.City.Name
+	order.AreaId = form.ExtraData.Area.ID
+	order.AreaName = form.ExtraData.Area.Name
 
 	// 保存修改
-	models.DB.Save(&form.Order)
+	models.DB.Save(&order)
 
 	// 先删除旧货物详情再添加
-	form.Order.DeleteAllDetail()
-	go form.Order.AddDetails(form.Products)
+	order.DeleteAllDetail()
+	go order.AddDetails(form.Products)
 
 	plugins.ApiExport(context).ApiExport()
 }
@@ -170,12 +169,9 @@ func OrderDelete(context *gin.Context) {
 		return
 	}
 
-	var order models_order.FinanceOrder
+	order := form.Order()
 
-	query := form.Query()
-
-	if err := query.Find(&order, form.OrderId).Error; err != nil {
-		fmt.Println(err.Error())
+	if order.ID == 0 {
 		plugins.ApiExport(context).Error(5011, "订单编号未找到")
 		return
 	}
@@ -197,9 +193,7 @@ func OrderAmount(context *gin.Context) {
 		return
 	}
 
-	var order models_order.FinanceOrder
-	query := form.Query()
-	query.Find(&order)
+	order := form.Order()
 	if order.ID != 0 {
 		export := plugins.ApiExport(context)
 		export.SetData("expected_amount", order.ExpectedAmount)
@@ -220,9 +214,7 @@ func OrderAmountEdit(context *gin.Context) {
 		return
 	}
 
-	var order models_order.FinanceOrder
-	query := form.Query()
-	query.Find(&order)
+	order := form.Order()
 	if order.ID != 0 {
 		order.ExpectedAmount = form.ExpectedAmount
 		order.ActualAmount = form.ActualAmount

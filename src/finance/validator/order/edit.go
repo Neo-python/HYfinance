@@ -2,20 +2,17 @@ package order
 
 import (
 	"errors"
-	"finance/models"
-	"finance/models/order"
 )
 
 type OrderEditForm struct {
 	OrderFormBase
 	OrderIdBase
-	Order     order.FinanceOrder
 	ExtraData OrderFormExtraData
 }
 
 func (form *OrderEditForm) Valid() error {
-
-	if err := models.DB.Find(&form.Order, form.OrderId).Error; err != nil {
+	form.Order()
+	if form.FormOrder.ID == 0 {
 		return errors.New("订单编号未找到")
 	}
 

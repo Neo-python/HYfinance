@@ -5,8 +5,10 @@ import (
 	finance_model "finance/models/finance"
 	plugins "finance/plugins/common"
 	"finance/plugins/jwt_auth"
+	"finance/plugins/redis"
 	"finance/validator"
 	"finance/validator/account"
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -64,6 +66,9 @@ func EditPassword(context *gin.Context) {
 	models.DB.Save(&finance)
 	export := plugins.ApiExport(context)
 	export.ApiExport()
+
+	// 删除旧token记录
+	redis.Delete(fmt.Sprintf("FinanceIat_%s", form.Phone))
 
 	// 操作完成后执行清理工作
 	defer form.Complete(form.RedisCodeKey("edit_password", form.Phone))

@@ -3,6 +3,7 @@ package init
 import (
 	"finance/models"
 	"finance/models/area"
+	"finance/models/driver"
 	"finance/models/finance"
 	"finance/models/order"
 	"finance/models/receiver"
@@ -36,4 +37,12 @@ func init() {
 
 	// FinanceSender
 	models.DB.AutoMigrate(&sender.FinanceSender{})
+
+	// FinanceDriver
+	models.DB.AutoMigrate(&driver.FinanceDriver{})
+	models.DB.AutoMigrate(&driver.FinanceDriverTrips{})
+	models.DB.AutoMigrate(&driver.FinanceDriverTripsDetails{})
+	models.DB.Model(&driver.FinanceDriverTrips{}).AddForeignKey("driver_id", "finance_driver(id)", "no action", "no action")
+	models.DB.Model(&driver.FinanceDriverTripsDetails{}).AddForeignKey("trips_id", "finance_driver_trips(id)", "no action", "no action")
+	models.DB.Model(&driver.FinanceDriverTripsDetails{}).AddForeignKey("order_id", "finance_order(id)", "no action", "no action")
 }
