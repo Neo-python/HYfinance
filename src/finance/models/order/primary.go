@@ -52,6 +52,7 @@ func (order *FinanceOrder) AddDetails(products []*Product) {
 			OrderId:  order.ID,
 			Name:     product.Name,
 			Quantity: product.Quantity,
+			Unit:     product.Unit,
 			Price:    product.Price}
 		models.DB.Save(&detail)
 	}

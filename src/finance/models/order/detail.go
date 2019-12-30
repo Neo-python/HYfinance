@@ -8,4 +8,5 @@ type FinanceOrderDetail struct {
 	Quantity int          `json:"quantity" gorm:"COMMENT:'数量'"`
 	Unit     int          `json:"unit" gorm:"COMMENT:'单位'"`
 	Price    int          `json:"price" gorm:"COMMENT:'价格'"`
+	Measure  int          `json:"measure" gorm:"COMMENT:'计量单位值,测量值'"`
 }
