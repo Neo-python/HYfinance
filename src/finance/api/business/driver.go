@@ -274,6 +274,12 @@ func DriverTripsOrderList(context *gin.Context) {
 		return
 	}
 
+	// 自定义逻辑验证
+	if err := form.Valid(); err != nil {
+		plugins.ApiExport(context).Error(5011, err.Error())
+		return
+	}
+
 	trips := form.Trips()
 	trips.GetDetails()
 	details_json := make([]map[string]interface{}, 0)
@@ -345,9 +351,7 @@ func DriverTripsDeleteOrder(context *gin.Context) {
 		return
 	}
 
-	details.GetOrder()
-	details.Order.EditAllocationStatus(0)
-	models.DB.Unscoped().Delete(&details)
+	details.DeleteSelf()
 
 	plugins.ApiExport(context).ApiExport()
 	return
@@ -361,6 +365,11 @@ func DriverTripsEditOrderAmount(context *gin.Context) {
 
 	if err := validator.Valid.Struct(&form); err != nil {
 		plugins.ApiExport(context).FormError(err)
+		return
+	}
+
+	if err := form.Valid(); err != nil {
+		plugins.ApiExport(context).Error(5011, err.Error())
 		return
 	}
 

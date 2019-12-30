@@ -3,7 +3,6 @@ package driver
 import (
 	"finance/models"
 	"finance/models/order"
-	"fmt"
 	"github.com/jinzhu/gorm"
 	"time"
 )
@@ -15,7 +14,7 @@ type FinanceDriverTrips struct {
 	Date         time.Time                   `json:"date" gorm:"COMMENT:'出发日期'"`
 	Driver       FinanceDriver               `gorm:"ForeignKey:DriverId"`
 	DriverId     uint                        `json:"driver_id"`
-	Remark       string                      `json:"remark" form:"remark"`
+	Remark       string                      `json:"remark" form:"remark" gorm:"COMMENT:'车次备注'"`
 	Details      []FinanceDriverTripsDetails `gorm:"ForeignKey:TripsId"`
 }
 
@@ -35,7 +34,11 @@ func (trips *FinanceDriverTrips) GetDetails() {
 
 // 删除车次,处理订单分配状态
 func (trips *FinanceDriverTrips) DeleteSelf() {
-
+	trips.GetDetails()
+	for _, item := range trips.Details {
+		item.DeleteSelf()
+	}
+	models.DB.Unscoped().Delete(&trips)
 }
 
 type FinanceDriverTripsDetails struct {
@@ -66,8 +69,19 @@ func (details *FinanceDriverTripsDetails) SelfToJson() map[string]interface{} {
 // 车次分配订单详情序列化
 func (details *FinanceDriverTripsDetails) ToJson() map[string]interface{} {
 	details.GetOrder()
-	fmt.Println(details.Order.ToJson())
 	return map[string]interface{}{
 		"record": details.SelfToJson(),
 		"order":  details.Order.ToJson()["base_info"]}
+}
+
+// 释放订单
+func (details *FinanceDriverTripsDetails) FreedOrder() {
+	details.GetOrder()
+	details.Order.EditAllocationStatus(0)
+}
+
+// 删除自身
+func (details *FinanceDriverTripsDetails) DeleteSelf() {
+	details.FreedOrder()
+	models.DB.Unscoped().Delete(&details)
 }

@@ -12,10 +12,10 @@ import (
 
 type Finance struct {
 	gorm.Model
-	Name     string `json:"name"`
-	Phone    string `json:"phone" gorm:"unique_index"`
+	Name     string `json:"name" gorm:"COMMENT:'名称'"`
+	Phone    string `json:"phone" gorm:"unique_index;COMMENT:'手机号'"`
 	Password string `structs:",remove"`
-	Level    int    `json:"level" gorm:"default:1"`
+	Level    int    `json:"level" gorm:"default:1;COMMENT:'权限等级.1:普通角色 2:管理员角色'"`
 }
 
 // 生成token
@@ -44,5 +44,6 @@ func (finance *Finance) ToJson() *map[string]interface{} {
 	data := make(map[string]interface{})
 	data["name"] = finance.Name
 	data["phone"] = finance.Phone
+	data["level"] = finance.Level
 	return &data
 }

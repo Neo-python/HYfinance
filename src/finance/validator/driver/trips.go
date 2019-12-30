@@ -23,6 +23,14 @@ func (form *TripsDetailsIdBase) TripsDetails() *model_driver.FinanceDriverTripsD
 	return &form.FormTripsDetails
 }
 
+// 检查订单分配信息是否存在
+func (form *TripsDetailsIdBase) CheckTripsDetails() error {
+	if form.TripsDetails().ID == 0 {
+		return errors.New("车次订单分配号不存在.")
+	}
+	return nil
+}
+
 func (form *TripsDetailsIdBase) GetTripsDetails() *model_driver.FinanceDriverTripsDetails {
 	var trips_details model_driver.FinanceDriverTripsDetails
 	models.DB.First(&trips_details, form.TripsOrderId)
@@ -37,10 +45,18 @@ type TripsIdBase struct {
 // 复用车次数据
 func (form *TripsIdBase) Trips() *model_driver.FinanceDriverTrips {
 	if form.FormTrips.ID == 0 {
-		form.FormTrips = *form.Trips()
+		form.FormTrips = *form.GetTrips()
 	}
 
 	return &form.FormTrips
+}
+
+// 检查车次数据是否存在
+func (form *TripsIdBase) CheckTrips() error {
+	if form.Trips().ID == 0 {
+		return errors.New("车次不存在")
+	}
+	return nil
 }
 
 func (form *TripsIdBase) GetTrips() *model_driver.FinanceDriverTrips {
@@ -143,6 +159,14 @@ type TripsOrderListForm struct {
 	TripsIdBase
 }
 
+// 表单自定义验证逻辑
+func (form *TripsOrderListForm) Valid() error {
+	if err := form.CheckTrips(); err != nil {
+		return err
+	}
+	return nil
+}
+
 // 车次添加订单
 type AddTripsOrderForm struct {
 	TripsIdBase
@@ -176,4 +200,12 @@ type EditTripsOrderAmountForm struct {
 	TripsDetailsIdBase
 	ExpectedAmount float64 `json:"expected_amount" validate:"required" error_message:"预期收取费用~required:此字段必须填写"`
 	ActualAmount   float64 `json:"actual_amount" validate:"required" error_message:"实际收取费用~required:此字段必须填写"`
+}
+
+// 自定义表单验证
+func (form *EditTripsOrderAmountForm) Valid() error {
+	if err := form.CheckTripsDetails(); err != nil {
+		return err
+	}
+	return nil
 }

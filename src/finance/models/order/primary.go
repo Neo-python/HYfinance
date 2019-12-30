@@ -85,7 +85,8 @@ func (order *FinanceOrder) ToJson() map[string]interface{} {
 			"area_id":             order.AreaId,
 			"area_name":           order.AreaName,
 			"deliver":             order.Deliver,
-			"payment_method":      order.PaymentMethod},
+			"payment_method":      order.PaymentMethod,
+			"allocation_status":   order.AllocationStatus},
 		"product_information": order.Details,
 		"create_time":         order.CreatedAt,
 		"update_time":         order.UpdatedAt}

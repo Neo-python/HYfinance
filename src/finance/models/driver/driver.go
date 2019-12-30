@@ -4,9 +4,9 @@ import "github.com/jinzhu/gorm"
 
 type FinanceDriver struct {
 	gorm.Model
-	Name        string `json:"name"`
-	NumberPlate string `json:"number_plate"`
-	Phone       string `json:"phone"`
+	Name        string `json:"name" gorm:"COMMENT:'名称'"`
+	NumberPlate string `json:"number_plate" gorm:"COMMENT:'车牌号'"`
+	Phone       string `json:"phone" gorm:"COMMENT:'手机号'"`
 }
 
 func (driver *FinanceDriver) ToJson() map[string]interface{} {
