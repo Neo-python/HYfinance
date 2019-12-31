@@ -7,6 +7,7 @@ import (
 	plugins "finance/plugins/common"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"net/http"
 	"time"
 )
 
@@ -47,6 +48,14 @@ func JWTAuth() gin.HandlerFunc {
 func Cors() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		context.Header("Access-Control-Allow-Origin", "*")
+		context.Header("Access-Control-Allow-Headers", "*")
+		//放行所有OPTIONS方法
+		method := context.Request.Method
+		if method == "OPTIONS" {
+			context.AbortWithStatus(http.StatusNoContent)
+		}
+		// 处理请求
+		context.Next()
 	}
 }
 
@@ -133,6 +142,25 @@ func (j *JWT) RefreshToken(tokenString string) (string, error) {
 		return j.CreateToken(claims)
 	}
 	return "", TokenInvalid
+}
+
+// 获取用户数据
+func GetClaims(context *gin.Context) (*CustomClaims, error) {
+	var _claims CustomClaims
+	result, status := context.Get("claims")
+
+	if status != true {
+		return &_claims, errors.New("当前状态:未登录")
+	}
+
+	// 清理redis token.iat 缓存
+	claims, status := result.(*CustomClaims)
+
+	if status == false {
+		return &_claims, errors.New("当前状态:未登录")
+	}
+
+	return claims, nil
 }
 
 //

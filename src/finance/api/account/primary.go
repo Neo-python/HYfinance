@@ -101,15 +101,11 @@ func SignIn(context *gin.Context) {
 // 登出
 func SignOut(context *gin.Context) {
 
-	result, status := context.Get("claims")
-
-	if status != true {
-		plugins.ApiExport(context).Error(4005, "当前状态:未登录")
+	claims, err := jwt_auth.GetClaims(context)
+	if err != nil {
+		plugins.ApiExport(context).Error(4005, err.Error())
 		return
 	}
-
-	// 清理redis token.iat 缓存
-	claims, status := result.(*jwt_auth.CustomClaims)
 	claims.Clear()
 
 	export := plugins.ApiExport(context)

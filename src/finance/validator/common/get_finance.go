@@ -1,7 +1,6 @@
 package common
 
 import (
-	"errors"
 	"finance/models"
 	"finance/models/finance"
 	"finance/plugins/jwt_auth"
@@ -11,16 +10,11 @@ import (
 // 获取用户模型
 func GetFinance(context *gin.Context) (*finance.Finance, error) {
 	var finance finance.Finance
-	result, status := context.Get("claims")
 
-	if status != true {
-		return &finance, errors.New("未能获取用户")
-	}
+	claims, err := jwt_auth.GetClaims(context)
 
-	claims, status := result.(*jwt_auth.CustomClaims)
-
-	if status != true {
-		return &finance, errors.New("用户数据异常,请重新登录!")
+	if err != nil {
+		return &finance, err
 	}
 
 	// 操作数据库

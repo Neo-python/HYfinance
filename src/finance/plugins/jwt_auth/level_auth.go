@@ -1,7 +1,7 @@
 package jwt_auth
 
 import (
-	"finance/plugins/common"
+	plugins "finance/plugins/common"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,10 +12,13 @@ func LevelAuth(level int) gin.HandlerFunc {
 		if context.IsAborted() == true {
 			return
 		}
-		result, _ := context.Get("claims")
-		claims, _ := result.(*CustomClaims)
+
+		claims, err := GetClaims(context)
+		if err != nil {
+			plugins.ApiExport(context).Error(4005, "用户未登录")
+		}
 		if claims.Level < level {
-			common.ApiExport(context).Error(5011, "权限不足")
+			plugins.ApiExport(context).Error(5011, "权限不足")
 		}
 
 	}

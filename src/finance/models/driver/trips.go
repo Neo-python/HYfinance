@@ -3,6 +3,8 @@ package driver
 import (
 	"finance/models"
 	"finance/models/order"
+	"finance/plugins/jwt_auth"
+	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"time"
 )
@@ -67,11 +69,12 @@ func (details *FinanceDriverTripsDetails) SelfToJson() map[string]interface{} {
 }
 
 // 车次分配订单详情序列化
-func (details *FinanceDriverTripsDetails) ToJson() map[string]interface{} {
+func (details *FinanceDriverTripsDetails) ToJson(context *gin.Context) map[string]interface{} {
 	details.GetOrder()
+	claims, _ := jwt_auth.GetClaims(context)
 	return map[string]interface{}{
 		"record": details.SelfToJson(),
-		"order":  details.Order.ToJson()["base_info"]}
+		"order":  details.Order.ToJson(claims.Level)["base_info"]}
 }
 
 // 释放订单

@@ -4,6 +4,7 @@ import (
 	"finance/models"
 	models_order "finance/models/order"
 	plugins "finance/plugins/common"
+	"finance/plugins/jwt_auth"
 	"finance/validator"
 	"finance/validator/common"
 	forms "finance/validator/order"
@@ -67,7 +68,7 @@ func AddOrder(context *gin.Context) {
 func OrderList(context *gin.Context) {
 	var form forms.OrderListForm
 	context.ShouldBind(&form)
-
+	claims, _ := jwt_auth.GetClaims(context)
 	if err := validator.Valid.Struct(&form); err != nil {
 		plugins.ApiExport(context).FormError(err)
 		return
@@ -81,7 +82,7 @@ func OrderList(context *gin.Context) {
 
 	orders_json := []map[string]interface{}{}
 	for _, item := range orders {
-		orders_json = append(orders_json, item.ToJson())
+		orders_json = append(orders_json, item.ToJson(claims.Level))
 	}
 
 	plugins.ApiExport(context).ListPageExport(orders_json, form.Page, form.Total)
@@ -99,9 +100,10 @@ func OrderInfo(context *gin.Context) {
 
 	order := form.Order()
 	order.QueryDetails()
+	claims, _ := jwt_auth.GetClaims(context)
 	if order.ID != 0 {
 		export := plugins.ApiExport(context)
-		export.SetData("order", order.ToJson())
+		export.SetData("order", order.ToJson(claims.Level))
 		export.ApiExport()
 	} else {
 		plugins.ApiExport(context).Error(5011, "订单未找到")

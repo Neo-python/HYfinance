@@ -70,9 +70,20 @@ func (order *FinanceOrder) DeleteAllDetail() {
 }
 
 // 序列化
-func (order *FinanceOrder) ToJson() map[string]interface{} {
+func (order *FinanceOrder) ToJson(level int) map[string]interface{} {
+	var expected_amount interface{}
+	var actual_amount interface{}
+	if level == 2 {
+		expected_amount = order.ExpectedAmount
+		actual_amount = order.ActualAmount
+	} else {
+		expected_amount = nil
+		actual_amount = nil
+	}
+
 	return map[string]interface{}{
 		"base_info": map[string]interface{}{
+			"id":                  order.ID,
 			"receiver_name":       order.ReceiverName,
 			"receiver_phone":      order.ReceiverPhone,
 			"receiver_address":    order.ReceiverAddress,
@@ -88,6 +99,8 @@ func (order *FinanceOrder) ToJson() map[string]interface{} {
 			"area_name":           order.AreaName,
 			"deliver":             order.Deliver,
 			"payment_method":      order.PaymentMethod,
+			"expected_amount":     expected_amount,
+			"actual_amount":       actual_amount,
 			"allocation_status":   order.AllocationStatus},
 		"product_information": order.Details,
 		"create_time":         order.CreatedAt,

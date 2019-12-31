@@ -285,7 +285,7 @@ func DriverTripsOrderList(context *gin.Context) {
 	details_json := make([]map[string]interface{}, 0)
 
 	for _, item := range trips.Details {
-		details_json = append(details_json, item.ToJson())
+		details_json = append(details_json, item.ToJson(context))
 	}
 
 	export := plugins.ApiExport(context)
