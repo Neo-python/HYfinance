@@ -10,6 +10,7 @@ type FinanceSender struct {
 }
 
 type FinanceSenderJson struct {
+	Id          uint   `json:"id"`
 	CompanyName string `json:"company_name"`
 	Phone       string `json:"phone"`
 	Remark      string `json:"remark"`

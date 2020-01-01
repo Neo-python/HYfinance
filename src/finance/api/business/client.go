@@ -35,6 +35,7 @@ func QuerySender(context *gin.Context) {
 
 	for _, sender := range senders {
 		senders_json = append(senders_json, models_sender.FinanceSenderJson{
+			Id:          sender.ID,
 			CompanyName: sender.CompanyName,
 			Phone:       sender.Phone,
 			Remark:      sender.Remark})
@@ -70,6 +71,7 @@ func QueryReceiver(context *gin.Context) {
 
 	for _, receiver := range receivers {
 		receivers_json = append(receivers_json, models_receiver.FinanceReceiverJson{
+			Id:      receiver.ID,
 			Name:    receiver.Name,
 			Phone:   receiver.Phone,
 			Address: receiver.Address,
