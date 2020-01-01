@@ -54,7 +54,6 @@ func QueryArea(context *gin.Context) {
 		plugins.ApiExport(context).FormError(err)
 		return
 	}
-	form.Valid()
 
 	var areas []models_area.Area
 	models.DB.Where("superior_id=?", form.SuperiorId).Find(&areas)

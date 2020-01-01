@@ -8,7 +8,6 @@ import (
 	models_order "finance/models/order"
 	"finance/models/receiver"
 	"finance/models/sender"
-	"fmt"
 	"github.com/jinzhu/gorm"
 )
 
@@ -139,7 +138,6 @@ func (form *OrderFormBase) GetSender() *sender.FinanceSender {
 func (form *OrderFormBase) CheckProduct() bool {
 	// item 单条货物数据
 	for _, item := range form.ProductInformation {
-		fmt.Println(item)
 		name, ok := item["name"].(string)
 		if ok == false {
 			return false
