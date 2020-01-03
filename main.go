@@ -69,7 +69,7 @@ func CommonApiRegistered(engine *gin.Engine) {
 		open.POST("/send_sms/code", common.SMSSend)
 	}
 
-	auth := engine.Group("")
+	auth := engine.Group("", jwt_auth.JWTAuth())
 	{
 		auth.GET("/query_area", common.QueryArea)
 	}
@@ -86,9 +86,10 @@ func AccountApiRegistered(engine *gin.Engine) {
 		open.POST("/sign_in", account.SignIn)
 	}
 
-	auth := engine.Group("/account")
+	auth := engine.Group("/account", jwt_auth.JWTAuth())
 	{
 		auth.GET("/sign_out", account.SignOut)
+		auth.GET("/factory/get_token", account.GetFactoryToken)
 	}
 }
 

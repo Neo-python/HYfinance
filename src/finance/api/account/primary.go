@@ -1,6 +1,7 @@
 package account
 
 import (
+	"encoding/json"
 	"finance/models"
 	finance_model "finance/models/finance"
 	plugins "finance/plugins/common"
@@ -96,6 +97,7 @@ func SignIn(context *gin.Context) {
 	export.SetData("token", finance.Token())
 	export.SetData("finance", finance.ToJson())
 	export.ApiExport()
+	return
 }
 
 // 登出
@@ -110,4 +112,28 @@ func SignOut(context *gin.Context) {
 
 	export := plugins.ApiExport(context)
 	export.ApiExport()
+}
+
+// 获取绑定的厂家token
+func GetFactoryToken(context *gin.Context) {
+	claims, err := jwt_auth.GetClaims(context)
+	if err != nil {
+		plugins.ApiExport(context).Error(4005, err.Error())
+		return
+	}
+	token, err := plugins.CoreGetFactoryToken(claims.FactoryUuid)
+
+	detail_map := make(map[string]interface{})
+	json.Unmarshal([]byte(token), &detail_map)
+
+	if detail_map["error_code"].(float64) != 0 {
+		plugins.ApiExport(context).Error(5011, detail_map["message"].(string))
+		return
+	}
+
+	export := plugins.ApiExport(context)
+	export.SetData("factory_token", detail_map["data"].(string))
+	export.ApiExport()
+	return
+
 }

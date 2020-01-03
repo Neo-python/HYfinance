@@ -74,11 +74,12 @@ var (
 
 // 载荷，可以加一些自己需要的信息
 type CustomClaims struct {
-	ID    string `json:"userId"`
-	Name  string `json:"name"`
-	Phone string `json:"phone"`
-	Iat   string `json:"iat"`
-	Level int    `json:"level"`
+	ID          string `json:"userId"`
+	Name        string `json:"name"`
+	Phone       string `json:"phone"`
+	Iat         string `json:"iat"`
+	Level       int    `json:"level"`
+	FactoryUuid string `json:"factory_uuid"`
 	jwt.StandardClaims
 }
 
