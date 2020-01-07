@@ -2,7 +2,6 @@ package redis
 
 import (
 	"finance/plugins"
-	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"time"
 )
@@ -42,7 +41,6 @@ func Set(key string, value interface{}, ex int) {
 	defer redis_client.Close()
 
 	redis_client.Do("SET", key, value, "EX", ex)
-	fmt.Println(key, value)
 }
 
 func Get(key string) (interface{}, error) {

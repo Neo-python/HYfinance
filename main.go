@@ -36,27 +36,27 @@ func BusinessApiRegistered(engine *gin.Engine) {
 	auth := engine.Group(relative_path, jwt_auth.JWTAuth())
 
 	{
-		auth.GET("/order/list", business.OrderList)
-		auth.GET("/order/info", business.OrderInfo)
-		auth.GET("/query_receiver", business.QueryReceiver)
-		auth.GET("/query_sender", business.QuerySender)
+		auth.GET("/order/list/", business.OrderList)
+		auth.GET("/order/info/", business.OrderInfo)
+		auth.GET("/query_receiver/", business.QueryReceiver)
+		auth.GET("/query_sender/", business.QuerySender)
 	}
 	{
-		auth.POST("/order/add", business.AddOrder)
-		auth.POST("/order/edit", business.OrderEdit)
+		auth.POST("/order/add/", business.AddOrder)
+		auth.POST("/order/edit/", business.OrderEdit)
 	}
 
 	{
-		auth.DELETE("/order/delete", business.OrderDelete)
+		auth.DELETE("/order/delete/", business.OrderDelete)
 	}
 
 	level_auth := engine.Group(relative_path, jwt_auth.LevelAuth(2))
 
 	{
-		level_auth.GET("/order/info/amount", business.OrderAmount)
+		level_auth.GET("/order/info/amount/", business.OrderAmount)
 	}
 	{
-		level_auth.POST("/order/amount/edit", business.OrderAmountEdit)
+		level_auth.POST("/order/amount/edit/", business.OrderAmountEdit)
 	}
 
 }
@@ -66,12 +66,12 @@ func CommonApiRegistered(engine *gin.Engine) {
 	open := engine.Group("")
 
 	{
-		open.POST("/send_sms/code", common.SMSSend)
+		open.POST("/send_sms/code/", common.SMSSend)
 	}
 
 	auth := engine.Group("", jwt_auth.JWTAuth())
 	{
-		auth.GET("/query_area", common.QueryArea)
+		auth.GET("/query_area/", common.QueryArea)
 	}
 
 }
@@ -81,15 +81,15 @@ func AccountApiRegistered(engine *gin.Engine) {
 	open := engine.Group("/account")
 
 	{
-		open.POST("/registered", account.Registered)
-		open.POST("/edit_password", account.EditPassword)
-		open.POST("/sign_in", account.SignIn)
+		open.POST("/registered/", account.Registered)
+		open.POST("/edit_password/", account.EditPassword)
+		open.POST("/sign_in/", account.SignIn)
 	}
 
-	auth := engine.Group("/account", jwt_auth.JWTAuth())
+	auth := engine.Group("/account/", jwt_auth.JWTAuth())
 	{
-		auth.GET("/sign_out", account.SignOut)
-		auth.GET("/factory/get_token", account.GetFactoryToken)
+		auth.GET("/sign_out/", account.SignOut)
+		auth.GET("/factory/get_token/", account.GetFactoryToken)
 	}
 }
 
@@ -98,24 +98,24 @@ func DriverApiRegistered(engine *gin.Engine) {
 	level_auth := engine.Group("/driver", jwt_auth.LevelAuth(2))
 
 	{
-		level_auth.POST("/add", business.AddDriver)
-		level_auth.POST("/edit", business.DriverEdit)
-		level_auth.POST("/trips/add", business.AddDriverTrips)
-		level_auth.POST("/trips/edit", business.DriverTripsEdit)
-		level_auth.POST("/trips/order/add", business.DriverTripsAddOrder)
-		level_auth.POST("/trips/order/amount/edit", business.DriverTripsEditOrderAmount)
+		level_auth.POST("/add/", business.AddDriver)
+		level_auth.POST("/edit/", business.DriverEdit)
+		level_auth.POST("/trips/add/", business.AddDriverTrips)
+		level_auth.POST("/trips/edit/", business.DriverTripsEdit)
+		level_auth.POST("/trips/order/add/", business.DriverTripsAddOrder)
+		level_auth.POST("/trips/order/amount/edit/", business.DriverTripsEditOrderAmount)
 	}
 
 	{
-		level_auth.GET("/info", business.DriverInfo)
-		level_auth.GET("/list", business.DriverList)
-		level_auth.GET("/trips/info", business.DriverTripsInfo)
-		level_auth.GET("/trips/list", business.DriverTripsList)
-		level_auth.GET("/trips/order/list", business.DriverTripsOrderList)
+		level_auth.GET("/info/", business.DriverInfo)
+		level_auth.GET("/list/", business.DriverList)
+		level_auth.GET("/trips/info/", business.DriverTripsInfo)
+		level_auth.GET("/trips/list/", business.DriverTripsList)
+		level_auth.GET("/trips/order/list/", business.DriverTripsOrderList)
 	}
 	{
-		level_auth.DELETE("/delete", business.DeleteDriver)
-		level_auth.DELETE("trips/delete", business.DeleteDriverTrips)
-		level_auth.DELETE("trips/order/delete", business.DriverTripsDeleteOrder)
+		level_auth.DELETE("/delete/", business.DeleteDriver)
+		level_auth.DELETE("trips/delete/", business.DeleteDriverTrips)
+		level_auth.DELETE("trips/order/delete/", business.DriverTripsDeleteOrder)
 	}
 }
