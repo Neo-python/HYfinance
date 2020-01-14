@@ -100,7 +100,7 @@ func DeleteDriver(context *gin.Context) {
 		return
 	}
 
-	models.DB.Delete(&driver)
+	driver.Delete()
 
 	plugins.ApiExport(context).ApiExport()
 	return

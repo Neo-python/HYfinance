@@ -1,6 +1,9 @@
 package driver
 
-import "github.com/jinzhu/gorm"
+import (
+	"finance/models"
+	"github.com/jinzhu/gorm"
+)
 
 type FinanceDriver struct {
 	gorm.Model
@@ -15,4 +18,12 @@ func (driver *FinanceDriver) ToJson() map[string]interface{} {
 		"name":         driver.Name,
 		"number_plate": driver.NumberPlate,
 		"phone":        driver.Phone}
+}
+
+// 删除驾驶员
+func (driver *FinanceDriver) Delete() {
+	var tripss []FinanceDriverTrips
+	models.DB.Where("driver_id=?", driver.ID).Find(&tripss)
+	models.DB.Delete(&tripss)
+	models.DB.Delete(&driver)
 }
