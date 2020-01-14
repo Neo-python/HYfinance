@@ -29,7 +29,8 @@ type DriverListForm struct {
 
 func (form *DriverListForm) GetDrivers() []models_driver.FinanceDriver {
 	var drivers []models_driver.FinanceDriver
-	models.DB.Offset((form.Page - 1) * form.Limit).Limit(form.Limit).Find(&drivers).Count(&form.Total)
+	models.DB.Model(models_driver.FinanceDriver{}).Count(&form.Total)
+	models.DB.Offset((form.Page - 1) * form.Limit).Limit(form.Limit).Find(&drivers)
 	return drivers
 
 }

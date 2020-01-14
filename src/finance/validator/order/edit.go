@@ -34,6 +34,6 @@ func (form *OrderEditForm) Valid() error {
 // 订单金额修改
 type OrderAmountEditForm struct {
 	OrderInfo
-	ExpectedAmount float64 `json:"expected_amount" validate:"required" error_message:"预期收取费用~required:此字段必须填写"`
-	ActualAmount   float64 `json:"actual_amount" validate:"required" error_message:"实际收取费用~required:此字段必须填写"`
+	ExpectedAmount float64 `json:"expected_amount"`
+	ActualAmount   float64 `json:"actual_amount"`
 }

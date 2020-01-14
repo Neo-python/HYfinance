@@ -281,15 +281,31 @@ func DriverTripsOrderList(context *gin.Context) {
 	}
 
 	trips := form.Trips()
+	totalOrderCount := 0
+	completeOrderCount := 0
+	var totalExpectedAmount float64
+	var totalActualAmount float64
+
 	trips.GetDetails()
-	details_json := make([]map[string]interface{}, 0)
+	detailsJson := make([]map[string]interface{}, 0)
 
 	for _, item := range trips.Details {
-		details_json = append(details_json, item.ToJson(context))
+		detailsJson = append(detailsJson, item.ToJson(context))
+
+		totalOrderCount += 1
+		if item.ExpectedAmount == item.ActualAmount {
+			completeOrderCount += 1
+		}
+		totalActualAmount += item.ActualAmount
+		totalExpectedAmount += item.ExpectedAmount
 	}
 
 	export := plugins.ApiExport(context)
-	export.SetData("items", details_json)
+	export.SetData("items", detailsJson)
+	export.SetData("total_actual_amount", totalActualAmount)
+	export.SetData("total_expected_amount", totalExpectedAmount)
+	export.SetData("total_order_count", totalOrderCount)
+	export.SetData("complete_order_count", completeOrderCount)
 	export.ApiExport()
 	return
 }

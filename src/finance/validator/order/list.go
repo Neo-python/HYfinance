@@ -20,6 +20,7 @@ type OrderListForm struct {
 	StartDay         string `json:"start_day" form:"start_day"`
 	EndDay           string `json:"end_day" form:"end_day"`
 	AllocationStatus int    `json:"allocation_status" form:"allocation_status"`
+	TollStatus       int    `json:"toll_status" form:"toll_status"`
 }
 
 func (form *OrderListForm) Query() *gorm.DB {
@@ -58,6 +59,20 @@ func (form *OrderListForm) Query() *gorm.DB {
 
 	if form.EndDay != "" {
 		query = query.Where("created_at < ?", form.EndDay)
+	}
+
+	if form.TollStatus != 0 {
+		if form.TollStatus == 1 {
+			query = query.Where("actual_amount = expected_amount and expected_amount != 0")
+		}
+
+		if form.TollStatus == 2 {
+			query = query.Where("actual_amount != expected_amount and expected_amount != 0")
+		}
+
+		if form.TollStatus == 3 {
+			query = query.Where("expected_amount = 0")
+		}
 	}
 
 	return query

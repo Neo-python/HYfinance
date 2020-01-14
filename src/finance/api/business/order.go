@@ -149,6 +149,8 @@ func OrderEdit(context *gin.Context) {
 	order.CityName = form.ExtraData.City.Name
 	order.AreaId = form.ExtraData.Area.ID
 	order.AreaName = form.ExtraData.Area.Name
+	order.Deliver = form.Deliver
+	order.PaymentMethod = form.PaymentMethod
 
 	// 保存修改
 	models.DB.Save(&order)

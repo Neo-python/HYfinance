@@ -30,7 +30,7 @@ func init() {
 
 	// FinanceOrderDetail
 	models.DB.AutoMigrate(&order.FinanceOrderDetail{})
-	models.DB.Model(&order.FinanceOrderDetail{}).AddForeignKey("order_id", "finance_order(id)", "no action", "no action")
+	models.DB.Model(&order.FinanceOrderDetail{}).AddForeignKey("order_id", "finance_order(id)", "CASCADE", "no action")
 
 	// FinanceReceiver
 	models.DB.AutoMigrate(&receiver.FinanceReceiver{})
@@ -42,7 +42,7 @@ func init() {
 	models.DB.AutoMigrate(&driver.FinanceDriver{})
 	models.DB.AutoMigrate(&driver.FinanceDriverTrips{})
 	models.DB.AutoMigrate(&driver.FinanceDriverTripsDetails{})
-	models.DB.Model(&driver.FinanceDriverTrips{}).AddForeignKey("driver_id", "finance_driver(id)", "no action", "no action")
-	models.DB.Model(&driver.FinanceDriverTripsDetails{}).AddForeignKey("trips_id", "finance_driver_trips(id)", "no action", "no action")
-	models.DB.Model(&driver.FinanceDriverTripsDetails{}).AddForeignKey("order_id", "finance_order(id)", "no action", "no action")
+	models.DB.Model(&driver.FinanceDriverTrips{}).AddForeignKey("driver_id", "finance_driver(id)", "CASCADE", "no action")
+	models.DB.Model(&driver.FinanceDriverTripsDetails{}).AddForeignKey("trips_id", "finance_driver_trips(id)", "CASCADE", "no action")
+	models.DB.Model(&driver.FinanceDriverTripsDetails{}).AddForeignKey("order_id", "finance_order(id)", "CASCADE", "no action")
 }

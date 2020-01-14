@@ -143,7 +143,8 @@ func (form *TripsListForm) GetTrips() []model_driver.FinanceDriverTrips {
 	if form.DriverId != 0 {
 		query = query.Where("driver_id=?", form.DriverId)
 	}
-	query = query.Offset((form.Page - 1) * form.Limit).Limit(form.Limit).Find(&tripss).Count(&form.Total)
+	query.Count(&form.Total)
+	query = query.Offset((form.Page - 1) * form.Limit).Limit(form.Limit).Find(&tripss)
 
 	return tripss
 
@@ -198,8 +199,8 @@ type DeleteTripsOrderForm struct {
 // 修改车次订单金额
 type EditTripsOrderAmountForm struct {
 	TripsDetailsIdBase
-	ExpectedAmount float64 `json:"expected_amount" validate:"required" error_message:"预期收取费用~required:此字段必须填写"`
-	ActualAmount   float64 `json:"actual_amount" validate:"required" error_message:"实际收取费用~required:此字段必须填写"`
+	ExpectedAmount float64 `json:"expected_amount"`
+	ActualAmount   float64 `json:"actual_amount"`
 }
 
 // 自定义表单验证
