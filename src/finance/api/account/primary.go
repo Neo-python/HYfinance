@@ -3,7 +3,6 @@ package account
 import (
 	"encoding/json"
 	"finance/models"
-	finance_model "finance/models/finance"
 	plugins "finance/plugins/common"
 	"finance/plugins/jwt_auth"
 	"finance/plugins/redis"
@@ -31,8 +30,11 @@ func Registered(context *gin.Context) {
 		return
 	}
 
-	finance := finance_model.Finance{Name: form.Name, Phone: form.Phone, Password: plugins.SHA1(form.Password)}
-	if err := models.DB.Create(&finance).Error; err != nil {
+	finance := form.GetFinance()
+	finance.Name = form.Name
+	finance.Password = plugins.SHA1(form.Password)
+
+	if err := models.DB.Save(&finance).Error; err != nil {
 		plugins.ApiExport(context).Error(5010, "手机号已被注册")
 		return
 	}

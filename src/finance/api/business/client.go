@@ -83,3 +83,8 @@ func QueryReceiver(context *gin.Context) {
 	export.ApiExport()
 
 }
+
+// 收货人列表
+func ReceiverList() {
+
+}

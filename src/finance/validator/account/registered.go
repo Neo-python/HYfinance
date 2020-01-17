@@ -2,6 +2,8 @@ package account
 
 import (
 	"errors"
+	"finance/models"
+	models_finance "finance/models/finance"
 	"finance/plugins/redis"
 	"fmt"
 )
@@ -28,5 +30,15 @@ func (form *RegisteredForm) Valid() (bool, error) {
 		return false, errors.New("验证码错误")
 	}
 
+	if form.GetFinance().ID == 0 {
+		return false, errors.New("此手机号不能注册成为海粤财务,请与管理员联系")
+	}
+
 	return true, nil
+}
+
+func (form *RegisteredForm) GetFinance() *models_finance.Finance {
+	var finance models_finance.Finance
+	models.DB.Where("phone=?", form.Phone).Where("password=?", "").First(&finance)
+	return &finance
 }
