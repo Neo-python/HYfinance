@@ -56,13 +56,17 @@ func BusinessApiRegistered(engine *gin.Engine) {
 
 	{
 		level_auth.GET("/order/info/amount/", business.OrderAmount)
+		level_auth.GET("/sender/list/", business.SenderList)
+		level_auth.GET("/sender/info/", business.SenderInfo)
 		level_auth.GET("/receiver/list/", business.ReceiverList)
 		level_auth.GET("/receiver/info/", business.ReceiverInfo)
 		level_auth.GET("/receiver/product/list/", business.ProductList)
 		level_auth.GET("/receiver/product/info/", business.ProductInfo)
+		level_auth.GET("/receiver/product/query/", business.ProductQuery)
 	}
 	{
 		level_auth.POST("/order/amount/edit/", business.OrderAmountEdit)
+		level_auth.POST("/sender/edit/", business.SenderEdit)
 		level_auth.POST("/receiver/edit/", business.ReceiverEdit)
 		level_auth.POST("/receiver/product/add/", business.ProductAdd)
 		level_auth.POST("/receiver/product/edit/", business.ProductEdit)

@@ -84,6 +84,31 @@ func ProductInfo(context *gin.Context) {
 
 }
 
+// 货物查询
+func ProductQuery(context *gin.Context) {
+	var form client.ProductQueryForm
+	context.ShouldBind(&form)
+
+	if err := validator.Valid.Struct(&form); err != nil {
+		plugins.ApiExport(context).FormError(err)
+		return
+	}
+
+	products := form.Query()
+
+	productJson := make([]map[string]interface{}, 0)
+
+	for _, item := range products {
+		productJson = append(productJson, item.ToJson())
+	}
+
+	export := plugins.ApiExport(context)
+	export.SetData("items", productJson)
+	export.ApiExport()
+	return
+
+}
+
 // 编辑货物
 func ProductEdit(context *gin.Context) {
 
