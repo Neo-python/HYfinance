@@ -34,6 +34,7 @@ func init() {
 
 	// FinanceReceiver
 	models.DB.AutoMigrate(&receiver.FinanceReceiver{})
+	models.DB.AutoMigrate(&receiver.FinanceReceiverProduct{})
 
 	// FinanceSender
 	models.DB.AutoMigrate(&sender.FinanceSender{})

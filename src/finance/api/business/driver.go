@@ -119,13 +119,13 @@ func DriverList(context *gin.Context) {
 
 	drivers := form.GetDrivers()
 
-	drivers_json := make([]map[string]interface{}, 0)
+	driversJson := make([]map[string]interface{}, 0)
 
 	for _, item := range drivers {
-		drivers_json = append(drivers_json, item.ToJson())
+		driversJson = append(driversJson, item.ToJson())
 	}
 
-	plugins.ApiExport(context).ListPageExport(drivers_json, form.Page, form.Total)
+	plugins.ApiExport(context).ListPageExport(driversJson, form.Page, form.Total)
 	return
 }
 
