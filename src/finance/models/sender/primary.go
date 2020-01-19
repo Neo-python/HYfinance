@@ -7,6 +7,7 @@ type FinanceSender struct {
 	CompanyName string `json:"company_name" gorm:"COMMENT:'单位名'"`
 	Phone       string `json:"phone" gorm:"COMMENT:'手机号'"`
 	Remark      string `json:"remark" gorm:"COMMENT:'发货单位备注'"`
+	AutoFill    int    `json:"auto_fill" gorm:"COMMENT:'自动填充';DEFAULT:1"`
 }
 
 type FinanceSenderJson struct {
