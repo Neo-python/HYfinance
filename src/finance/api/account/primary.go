@@ -125,16 +125,16 @@ func GetFactoryToken(context *gin.Context) {
 	}
 	token, err := plugins.CoreGetFactoryToken(claims.FactoryUuid)
 
-	detail_map := make(map[string]interface{})
-	json.Unmarshal([]byte(token), &detail_map)
+	detailMap := make(map[string]interface{})
+	json.Unmarshal([]byte(token), &detailMap)
 
-	if detail_map["error_code"].(float64) != 0 {
-		plugins.ApiExport(context).Error(5011, detail_map["message"].(string))
+	if detailMap["error_code"].(float64) != 0 {
+		plugins.ApiExport(context).Error(5011, detailMap["message"].(string))
 		return
 	}
 
 	export := plugins.ApiExport(context)
-	export.SetData("factory_token", detail_map["data"].(string))
+	export.SetData("factory_token", detailMap["data"].(string))
 	export.ApiExport()
 	return
 
