@@ -3,7 +3,6 @@ package jwt_auth
 
 import (
 	"errors"
-	plugins_pkg "finance/plugins"
 	plugins "finance/plugins/common"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -74,6 +73,7 @@ var (
 	TokenNotValidYet error = errors.New("Token not active yet")
 	TokenMalformed   error = errors.New("That's not even a token")
 	TokenInvalid     error = errors.New("Couldn't handle this token:")
+	TokenSignKey     string
 )
 
 // 载荷，可以加一些自己需要的信息
@@ -90,13 +90,8 @@ type CustomClaims struct {
 // 新建一个jwt实例
 func NewJWT() *JWT {
 	return &JWT{
-		[]byte(GetSignKey()),
+		[]byte(TokenSignKey),
 	}
-}
-
-// 获取signKey
-func GetSignKey() string {
-	return plugins_pkg.Config.JWTSecretKey
 }
 
 // CreateToken 生成一个token

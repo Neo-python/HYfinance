@@ -1,9 +1,9 @@
 package order
 
 type Product struct {
-	Name     string `json:"name" validate:"required"`
-	Quantity int    `json:"quantity"`
-	Unit     int    `json:"unit"`
-	Price    int    `json:"price"`
-	Measure  int    `json:"measure"`
+	Name     string  `json:"name" validate:"required"`
+	Quantity float64 `json:"quantity"`
+	Unit     int     `json:"unit"`
+	Price    float64 `json:"price"`
+	Measure  float64 `json:"measure"`
 }

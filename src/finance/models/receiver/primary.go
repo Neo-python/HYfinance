@@ -41,7 +41,7 @@ func (product *FinanceReceiverProduct) ToJson() map[string]interface{} {
 	return map[string]interface{}{
 		"id":          product.ID,
 		"name":        product.Name,
-		"uint":        product.Unit,
+		"unit":        product.Unit,
 		"price":       product.Price,
 		"receiver_id": product.ReceiverId}
 }

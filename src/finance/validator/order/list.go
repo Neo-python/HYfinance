@@ -17,6 +17,7 @@ type OrderListForm struct {
 	SenderId         uint   `json:"sender_id" form:"sender_id"`
 	ReceiverId       uint   `json:"receiver_id" form:"receiver_id"`
 	ProductName      string `json:"product_name" form:"product_name"`
+	OrderUuid        string `json:"order_uuid" form:"order_uuid"`
 	StartDay         string `json:"start_day" form:"start_day"`
 	EndDay           string `json:"end_day" form:"end_day"`
 	AllocationStatus int    `json:"allocation_status" form:"allocation_status"`
@@ -24,10 +25,14 @@ type OrderListForm struct {
 }
 
 func (form *OrderListForm) Query() *gorm.DB {
-	query := models.DB.Model(models_order.FinanceOrder{})
+	query := models.DB.Model(models_order.FinanceOrder{}).Order("id desc")
 
 	if form.AllocationStatus != 2 {
 		query = query.Where("allocation_status=?", form.AllocationStatus)
+	}
+
+	if form.OrderUuid != "" {
+		query = query.Where("order_uuid like ?", fmt.Sprintf("%%%s%%", form.OrderUuid))
 	}
 
 	if form.ReceiverId != 0 {

@@ -50,7 +50,6 @@ func ProductAdd(context *gin.Context) {
 	}
 
 	product := receiver.FinanceReceiverProduct{Name: form.Name, Unit: form.Unit, Price: form.Price, ReceiverId: form.ReceiverId}
-
 	models.DB.Save(&product)
 
 	export := plugins.ApiExport(context)

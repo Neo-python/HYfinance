@@ -17,7 +17,7 @@ type OrderIdBase struct {
 }
 
 func (form *OrderIdBase) Query() *gorm.DB {
-	query := models.DB.Model(models_order.FinanceOrder{})
+	query := models.DB.Model(models_order.FinanceOrder{}).Preload("Details")
 
 	query = query.Where("id=?", form.OrderId)
 
@@ -42,7 +42,7 @@ func (form *OrderIdBase) GetOrder() *models_order.FinanceOrder {
 type OrderFormBase struct {
 	// 收货人相关
 	ReceiverName    string `json:"receiver_name" validate:"required,max=20" error_message:"收货人名~required:此字段必须填写;max:最大长度为20"`
-	ReceiverPhone   string `json:"receiver_phone" validate:"required,max=11" error_message:"收货人手机号~required:此字段必须填写;max:最大长度为11"`
+	ReceiverPhone   string `json:"receiver_phone" validate:"max=11" error_message:"收货人手机号~max:最大长度为11"`
 	ReceiverAddress string `json:"receiver_address" validate:"max=255" error_message:"收货人地址~max:最大长度为255"`
 	ReceiverTel     string `json:"receiver_tel" validate:"max=13" error_message:"收货人电话~max:最大长度为13"`
 
@@ -160,7 +160,7 @@ func (form *OrderFormBase) CheckProduct() bool {
 		if ok == false {
 			return false
 		}
-		form.Products = append(form.Products, &order.Product{Name: name, Quantity: int(quantity), Price: int(price), Unit: int(unit), Measure: int(measure)})
+		form.Products = append(form.Products, &order.Product{Name: name, Quantity: quantity, Price: price, Unit: int(unit), Measure: measure})
 	}
 	return true
 }

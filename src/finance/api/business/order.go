@@ -36,6 +36,7 @@ func AddOrder(context *gin.Context) {
 	}
 
 	order := models_order.FinanceOrder{
+		OrderUuid:         models_order.GenerateOrderUuid(),
 		Receiver:          *form.ExtraData.Receiver,
 		ReceiverName:      form.ExtraData.Receiver.Name,
 		ReceiverPhone:     form.ExtraData.Receiver.Phone,
@@ -154,7 +155,6 @@ func OrderEdit(context *gin.Context) {
 
 	// 保存修改
 	models.DB.Save(&order)
-
 	// 先删除旧货物详情再添加
 	order.DeleteAllDetail()
 	go order.AddDetails(form.Products)

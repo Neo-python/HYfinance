@@ -293,7 +293,7 @@ func DriverTripsOrderList(context *gin.Context) {
 		detailsJson = append(detailsJson, item.ToJson(context))
 
 		totalOrderCount += 1
-		if item.ExpectedAmount == item.ActualAmount {
+		if item.ExpectedAmount == item.ActualAmount && item.ExpectedAmount != 0 {
 			completeOrderCount += 1
 		}
 		totalActualAmount += item.ActualAmount

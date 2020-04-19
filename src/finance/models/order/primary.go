@@ -4,11 +4,14 @@ import (
 	"finance/models"
 	"finance/models/receiver"
 	"finance/models/sender"
+	"finance/plugins/common"
+	"fmt"
 	"github.com/jinzhu/gorm"
 )
 
 type FinanceOrder struct {
 	gorm.Model
+	OrderUuid         string `json:"order_uuid" gorm:"COMMENT:'订单编号'"`
 	ReceiverName      string `json:"receiver_name" gorm:"COMMENT:'收货人'"`
 	ReceiverPhone     string `json:"receiver_phone" gorm:"COMMENT:'收货人手机'"`
 	ReceiverAddress   string `json:"receiver_address" gorm:"COMMENT:'收货人地址'"`
@@ -38,7 +41,7 @@ type FinanceOrder struct {
 	AreaName string `json:"area_name"`
 
 	Deliver          int                  `json:"deliver" gorm:"COMMENT:'提货方式: 1:自提 2:送到'"`
-	PaymentMethod    int                  `json:"payment_method" gorm:"COMMENT:'付款方式: 1:现付 2:到付 3:汇款'"`
+	PaymentMethod    int                  `json:"payment_method" gorm:"COMMENT:'付款方式: 1:现付 2:到付 3:汇款 4:回单付 5:月结 6:厂付 7:免费'"`
 	ExpectedAmount   float64              `json:"_" gorm:"COMMENT:'预期收费'"`
 	ActualAmount     float64              `json:"-" gorm:"COMMENT:'实际付款'"`
 	Details          []FinanceOrderDetail `gorm:"ForeignKey:OrderId"`
@@ -69,6 +72,18 @@ func (order *FinanceOrder) DeleteAllDetail() {
 	models.DB.Delete(FinanceOrderDetail{}, "order_id=?", order.ID)
 }
 
+// 生成订单唯一编号
+func GenerateOrderUuid() string {
+	count := 0
+	uuid := common.GenerateVerifyCode(8)
+	models.DB.Model(FinanceOrder{}).Where("order_uuid=?", uuid).Count(&count)
+	if count != 0 {
+		return GenerateOrderUuid()
+	} else {
+		return uuid
+	}
+}
+
 // 序列化
 func (order *FinanceOrder) ToJson(level int) map[string]interface{} {
 	var expected_amount interface{}
@@ -84,6 +99,7 @@ func (order *FinanceOrder) ToJson(level int) map[string]interface{} {
 	return map[string]interface{}{
 		"base_info": map[string]interface{}{
 			"id":                  order.ID,
+			"order_uuid":          order.OrderUuid,
 			"receiver_name":       order.ReceiverName,
 			"receiver_phone":      order.ReceiverPhone,
 			"receiver_address":    order.ReceiverAddress,
@@ -110,4 +126,5 @@ func (order *FinanceOrder) ToJson(level int) map[string]interface{} {
 // 加载订单详情
 func (order *FinanceOrder) QueryDetails() {
 	models.DB.Model(&order).Association("Details").Find(&order.Details)
+	fmt.Println(order.Details)
 }

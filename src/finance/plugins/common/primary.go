@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-// 生成一个指定位数的数据码
+// 生成一个指定位数的数字码
 func GenerateVerifyCode(length int) string {
 	var build strings.Builder
 	// 加入随机因子

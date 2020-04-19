@@ -20,6 +20,9 @@ func main() {
 	if plugins.Config.GinMode == "release" {
 		gin.SetMode(gin.ReleaseMode)
 	}
+
+	jwt_auth.TokenSignKey = plugins.Config.SecretKey
+
 	router := gin.Default()
 	router.Use(jwt_auth.Cors())
 	BusinessApiRegistered(router)

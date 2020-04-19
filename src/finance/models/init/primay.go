@@ -12,6 +12,7 @@ import (
 
 func init() {
 
+	//models.DB.LogMode(true)
 	// area
 	models.DB.AutoMigrate(&area.Area{})
 

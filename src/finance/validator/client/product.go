@@ -70,13 +70,14 @@ type ProductInfoForm struct {
 
 // 产品查询
 type ProductQueryForm struct {
+	ReceiverIdBase
 	Name string `json:"name" form:"name" validate:"required" error_message:"产品名~required:请填写后重试."`
 }
 
 func (form *ProductQueryForm) Query() []models_receiver.FinanceReceiverProduct {
 	var products []models_receiver.FinanceReceiverProduct
 
-	models.DB.Where("name LIKE ?", fmt.Sprintf("%%%s%%", form.Name)).Limit(10).Find(&products)
+	models.DB.Where("receiver_id=?", form.ReceiverId).Where("name LIKE ?", fmt.Sprintf("%%%s%%", form.Name)).Limit(10).Find(&products)
 
 	return products
 }
